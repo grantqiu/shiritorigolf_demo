@@ -1,0 +1,2506 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="theme-color" content="#F5EDD8">
+<title>漢字ゴルフ — 常用カントリー倶楽部</title>
+<style>
+:root{
+  --paper:#F5EDD8; --paper-hi:#FBF5E6; --ink:#4A3B28; --ink-soft:#6E5C44;
+  --pencil:#A08F73; --rule:#DDDDD2; --shu:#B23A2F; --gold:#A67F2E; --acc:#E07B39;
+  --turf:#4A7A5C; --map-ink:#4A4B44; --map-corr:#E7F0DA; --map-fair:#CFE3AE;
+  --map-green:#AFD388; --map-water:#A9D6E8; --map-sand:#F2E7C8;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html{-webkit-text-size-adjust:100%}
+body{
+  font-family:"Hiragino Mincho ProN","Yu Mincho","Noto Serif JP","BIZ UDMincho",serif;
+  font-feature-settings:"palt";
+  background:var(--paper); color:var(--ink);
+  display:flex;flex-direction:column;align-items:center;min-height:100vh;
+}
+body::before{content:"";position:fixed;inset:0;pointer-events:none;z-index:0;
+  background:radial-gradient(ellipse 300px 220px at 92% 4%, rgba(138,141,134,.05), transparent 70%);
+}
+svg.grain{position:fixed;inset:0;width:100%;height:100%;pointer-events:none;opacity:.028;z-index:0}
+header,main,footer,.tabs,.tabline{position:relative;z-index:1}
+::selection{background:var(--shu);color:var(--paper)}
+header{width:100%;max-width:520px;padding:18px 18px 10px;display:flex;justify-content:space-between;align-items:flex-end;border-bottom:3px double var(--ink)}
+h1{font-size:25px;letter-spacing:.32em;font-weight:700}
+h1 small{display:block;font-family:ui-sans-serif,system-ui,sans-serif;font-size:9px;letter-spacing:.34em;color:var(--ink-soft);margin-top:3px}
+.hright{text-align:right;display:flex;flex-direction:column;align-items:flex-end;gap:4px}
+.datebox{font-family:ui-sans-serif,system-ui,sans-serif;font-size:10px;color:var(--ink-soft);letter-spacing:.14em}
+.iconbtn{background:none;border:1.4px solid var(--ink);border-radius:3px;color:var(--ink);cursor:pointer;padding:4px 8px;display:inline-flex;align-items:center;gap:6px;font-family:ui-sans-serif,system-ui,sans-serif;font-size:11px;letter-spacing:.12em}
+.iconbtn:hover{background:var(--paper-hi)}
+.iconbtn svg{display:block}
+.tabs{width:100%;max-width:520px;display:flex;padding:0 18px;margin-top:10px}
+
+.tabs,.tabbar{overflow-x:auto;flex-wrap:nowrap}
+@media(min-width:960px){
+  .tabs{position:fixed;left:10px;top:64px;flex-direction:column;width:122px;overflow:visible;gap:5px;z-index:40}
+  .tabs .tab{border-radius:8px;text-align:left;width:100%}
+  .tabline{display:none}
+  main{margin-left:142px}
+}
+.tab{white-space:nowrap;flex:1;font-family:ui-sans-serif,system-ui,sans-serif;font-size:12px;letter-spacing:.22em;padding:8px 0;text-align:center;border:1.4px solid var(--ink);border-bottom-width:0;background:transparent;color:var(--ink-soft);cursor:pointer;border-radius:4px 4px 0 0}
+.tab{white-space:nowrap;border-left-width:0}
+.tab.active{background:var(--paper-hi);color:var(--ink);font-weight:600}
+.tabline{width:100%;max-width:520px;border-bottom:1.4px solid var(--ink)}
+main{width:100%;max-width:520px;padding:14px 18px 44px;flex:1}
+.opts{border:1.4px solid var(--ink);border-radius:3px;background:var(--paper-hi);padding:10px 14px;margin:10px 0;font-family:ui-sans-serif,system-ui,sans-serif;font-size:12.5px;display:flex;gap:14px 20px;flex-wrap:wrap;align-items:center}
+.opts[hidden]{display:none}
+.opts label{display:flex;gap:7px;align-items:center;cursor:pointer;letter-spacing:.05em}
+.holecard{display:flex;align-items:center;justify-content:space-between;margin:10px 0 4px}
+.holeno{font-family:ui-sans-serif,system-ui,sans-serif;font-size:10.5px;letter-spacing:.26em;color:var(--ink-soft)}
+.parbadge{font-family:ui-sans-serif,system-ui,sans-serif;font-size:10.5px;letter-spacing:.2em;border:1.4px solid var(--acc);color:var(--acc);font-weight:700;padding:3px 10px;border-radius:2px;background:var(--paper-hi)}
+.clubtag{font-family:ui-sans-serif,system-ui,sans-serif;font-size:10.5px;border:1.4px solid var(--gold);color:var(--gold);border-radius:10px;padding:2px 9px;letter-spacing:.06em;display:inline-flex;align-items:center;gap:5px;vertical-align:middle}
+.teeline{display:flex;align-items:center;gap:14px;justify-content:center;margin:12px 0 4px}
+.bigk{font-size:47px;line-height:1;font-weight:700}
+.tee .bigk{color:var(--ink)}
+.pin .bigk{color:var(--shu)}
+.fairway-arrow{flex:1;max-width:104px;border-top:1.6px dashed var(--pencil);position:relative;height:0}
+.fairway-arrow::after{content:"";position:absolute;right:-2px;top:-4.5px;border:4px solid transparent;border-left-color:var(--pencil)}
+.sub{font-family:ui-sans-serif,system-ui,sans-serif;font-size:11px;color:var(--ink-soft);text-align:center;margin-bottom:8px;letter-spacing:.05em;line-height:1.55}
+.caddie{font-family:ui-sans-serif,system-ui,sans-serif;font-size:11.5px;font-weight:700;color:var(--ink);text-align:center;letter-spacing:.2em;min-height:16px;margin:2px 0 4px}
+.chainhead{display:flex;align-items:baseline;gap:10px;margin:12px 0 4px;font-family:ui-sans-serif,system-ui,sans-serif;font-size:11px;font-weight:700;letter-spacing:.18em;color:var(--turf)}
+.chain{display:flex;flex-direction:column;align-items:stretch;gap:5px;max-height:240px;overflow-y:auto;padding:8px 10px;border:1.3px solid var(--rule);border-radius:4px;background:var(--paper-hi)}
+.parr{display:none}
+.pill{display:inline-flex;align-items:center;gap:5px;border:1.3px solid var(--ink);border-radius:3px;background:#FFF;padding:3px 8px;box-shadow:1.5px 1.5px 0 rgba(51,53,47,.10)}
+.pilllast{border-width:1.8px;box-shadow:2px 2px 0 rgba(51,53,47,.16)}
+.pword{font-size:19px;letter-spacing:.06em;font-weight:600}
+.pilllast .pword{font-size:22px}
+.pno{font-family:ui-sans-serif,system-ui,sans-serif;font-size:9px;color:var(--pencil);font-weight:700}
+.pfuri{font-family:ui-sans-serif,system-ui,sans-serif;font-size:9.5px;color:var(--pencil)}
+.pmark{font-size:11px}
+.parr{color:var(--pencil);font-size:11px}
+.bagbox{position:relative;width:190px;height:206px;margin:2px auto 0}
+.bagbox svg{position:absolute;left:0;top:0}
+.med{position:absolute;width:52px;height:52px;border-radius:50%;border:2.5px solid var(--ink);background:#FBF5E6;padding:0;cursor:pointer;transition:top .18s ease, box-shadow .18s ease;box-shadow:1.5px 2px 0 rgba(74,59,40,.25);overflow:hidden}
+.med .hicon{width:100%;height:100%;display:block}
+.med.up{box-shadow:2px 4px 6px rgba(74,59,40,.35)}
+.med.medarmed{border-color:var(--gold);border-width:3.5px}
+.med.meddead{filter:grayscale(1);opacity:.55}
+.bagcard{width:210px;margin:6px auto 0;border:2px solid var(--ink);border-radius:9px;background:var(--paper-hi);padding:9px 11px;font-family:ui-sans-serif,system-ui,sans-serif;font-size:12px;box-shadow:0 0 0 3px var(--paper-hi),0 0 0 4px var(--rule),2px 3px 0 rgba(74,59,40,.16)}
+label.clubopt .hicon{width:24px;height:24px;border-radius:50%;border:1.6px solid var(--ink);vertical-align:-6px}
+.sideacts{display:flex;flex-direction:column;gap:6px;margin:10px auto 0;width:248px}
+.sideacts .qact{text-align:left}
+.qact{font-family:ui-sans-serif,system-ui,sans-serif;font-size:11.5px;letter-spacing:.06em;padding:7px 11px;border:1.2px solid var(--pencil);border-radius:3px;background:transparent;color:var(--ink-soft);cursor:pointer}
+.qact:hover{border-color:var(--ink);color:var(--ink)}
+.bmove{font-size:8px;padding:1px 5px;border:1px solid var(--rule);background:#fff;border-radius:2px;cursor:pointer;color:var(--ink-soft)}
+.bmove:disabled{opacity:.3}
+.bm{padding:5px 9px;font-size:11px}
+@media (pointer:coarse){.qact{padding:10px 13px}}
+.playgrid{display:grid;grid-template-columns:264px minmax(0,1fr);gap:20px;align-items:start;margin-top:6px}
+.pgleft{position:sticky;top:52px}
+.pgright{min-width:0}
+@media (max-width:640px){
+  .playgrid{display:block}
+  .pgleft{position:static;display:flex;flex-direction:column;align-items:center}
+}
+.mapwrap{display:flex;justify-content:center;margin:4px 0 8px}
+.mapcard{background:var(--paper-hi);border:1.4px solid var(--ink);border-radius:4px;padding:6px;box-shadow:2.5px 2.5px 0 rgba(42,43,38,.14)}
+.chain{display:flex;flex-direction:column;align-items:center;min-height:30px;margin:8px 0}
+.stroke{display:flex;align-items:center;gap:10px}
+.tilebox{display:flex;flex-direction:column;align-items:center}
+.furi{font-family:ui-sans-serif,system-ui,sans-serif;font-size:10px;color:var(--turf);letter-spacing:.2em;height:13px}
+.wordtile{background:var(--paper-hi);border:1.4px solid var(--ink);border-radius:3px;padding:6px 13px;font-size:24px;letter-spacing:.12em;box-shadow:2px 2px 0 rgba(42,43,38,.14);animation:drop .22s ease}
+.wordtile .lie{color:var(--turf);font-weight:700}
+.wordtile .holed{color:var(--shu);font-weight:700}
+.gloss{font-family:ui-sans-serif,system-ui,sans-serif;font-size:10px;color:var(--ink-soft);max-width:230px;text-align:center;line-height:1.35;margin-top:2px}
+.clubchip{font-family:ui-sans-serif,system-ui,sans-serif;font-size:9px;letter-spacing:.1em;border:1px solid var(--pencil);color:var(--pencil);border-radius:8px;padding:1px 7px;white-space:nowrap}
+.strokeno{font-family:ui-sans-serif,system-ui,sans-serif;font-size:10px;color:var(--pencil);width:16px;text-align:right}
+.link{width:0;border-left:1.6px dashed var(--pencil);height:11px}
+.notemini{background:none;border:1px solid var(--pencil);border-radius:2px;color:var(--pencil);font-size:10px;line-height:1;padding:1px 5px;cursor:pointer;vertical-align:middle;margin-left:5px;font-family:ui-sans-serif,system-ui,sans-serif}
+.notemini:hover{color:var(--shu);border-color:var(--shu)}
+.noted{color:var(--gold);font-size:11px;margin-left:5px}
+@keyframes drop{from{transform:translateY(-8px);opacity:0}to{transform:none;opacity:1}}
+.bag{display:inline-flex;align-items:center;gap:8px;border:1.4px solid var(--rule);border-radius:4px;background:var(--paper-hi);padding:5px 12px;cursor:pointer;font-family:ui-sans-serif,system-ui,sans-serif;font-size:11.5px;letter-spacing:.06em;color:var(--ink-soft);overflow:visible;user-select:none}
+.bag .stick{display:inline-flex;transition:transform .22s ease;transform:translateY(2px) rotate(34deg);transform-origin:bottom left;color:var(--pencil)}
+.bag:hover .stick,.bag.armed .stick{transform:translateY(-3px) rotate(6deg);color:var(--gold)}
+.bag.armed{border-color:var(--gold);color:var(--gold);box-shadow:0 0 0 2px rgba(154,122,42,.15)}
+.bag.spent{opacity:.4;cursor:default}
+.inputrow{display:flex;gap:8px;margin-top:12px}
+input#wordin{flex:1;min-width:0;font-family:inherit;font-size:21px;letter-spacing:.14em;padding:10px 12px;border:1.6px solid var(--ink);border-radius:3px;background:var(--paper-hi);color:var(--ink)}
+input#wordin:focus{outline:3px solid var(--turf);outline-offset:1px}
+input#wordin::placeholder{color:#a8a595}
+button.btn{font-family:ui-sans-serif,system-ui,sans-serif;letter-spacing:.16em;font-size:13px;border:1.6px solid var(--ink);background:linear-gradient(#F6EBCB,#EBDCB2);box-shadow:inset 0 0 0 1.4px var(--gold);font-weight:700;padding:10px 16px;border-radius:3px;cursor:pointer}
+button.btn:hover{background:#3d3e37}
+button.ghost{font-family:ui-sans-serif,system-ui,sans-serif;letter-spacing:.12em;font-size:12.5px;border:1.4px solid var(--ink);background:transparent;color:var(--ink);padding:8px 14px;border-radius:3px;cursor:pointer}
+button.ghost:hover{background:var(--paper-hi)}
+button:focus-visible{outline:3px solid var(--turf);outline-offset:2px}
+.msg{font-family:ui-sans-serif,system-ui,sans-serif;font-size:12px;min-height:18px;margin-top:8px;color:var(--shu);letter-spacing:.04em;text-align:center}
+.msg.ok{color:var(--turf)}
+.toolrow{display:flex;gap:8px;margin-top:10px;justify-content:center;flex-wrap:wrap}
+.resultflag{text-align:center;margin:16px 0 6px;font-size:19px;letter-spacing:.3em;color:var(--ink)}
+.resultflag b{font-size:29px;display:block;letter-spacing:.2em;margin-top:4px}
+.under{color:var(--gold)!important}
+.over{color:var(--shu)!important}
+.routegloss{font-size:12px;font-family:ui-sans-serif,system-ui,sans-serif;display:block;margin-top:6px;color:var(--ink-soft);letter-spacing:.03em;line-height:1.7}
+table.card{width:100%;border-collapse:collapse;font-family:ui-sans-serif,system-ui,sans-serif;font-size:12px;margin-top:14px;background:var(--paper-hi)}
+.card th,.card td{border:1px solid var(--rule);padding:6px 3px;text-align:center}
+.card th{background:linear-gradient(#F6EBCB,#EBDCB2);box-shadow:inset 0 0 0 1.4px var(--gold);font-weight:700;font-weight:600;letter-spacing:.1em}
+.card td{color:var(--pencil);font-weight:600}
+.card td.now{background:#EAE3CC}
+.scmark{display:inline-flex;align-items:center;justify-content:center;width:20px;height:20px}
+.scmark.birdie{border:1.4px solid var(--pencil);border-radius:50%}
+.scmark.eagle{border:1.4px solid var(--pencil);border-radius:50%;box-shadow:0 0 0 2.5px var(--paper-hi),0 0 0 3.9px var(--pencil)}
+.scmark.bogey{border:1.4px solid var(--pencil)}
+.scmark.dbogey{border:1.4px solid var(--pencil);box-shadow:0 0 0 2.5px var(--paper-hi),0 0 0 3.9px var(--pencil)}
+.sharebox{white-space:pre;background:linear-gradient(#F6EBCB,#EBDCB2);box-shadow:inset 0 0 0 1.4px var(--gold);font-weight:700;font-family:ui-monospace,Menlo,monospace;font-size:13px;padding:14px;border-radius:4px;margin-top:14px;line-height:1.75}
+.finwrap{position:relative}
+.hanko{position:absolute;right:6px;top:-6px;width:74px;height:74px;transform:rotate(-12deg);opacity:0;pointer-events:none}
+.hanko.stamped{animation:stamp .38s cubic-bezier(.2,1.6,.4,1) forwards}
+@keyframes stamp{0%{opacity:0;transform:rotate(-12deg) scale(1.7)}60%{opacity:.92}100%{opacity:.88;transform:rotate(-12deg) scale(1)}}
+.courseview{display:block;margin:10px 0}
+.mgrid{display:grid;grid-template-columns:repeat(3,1fr);gap:9px}
+.mcard{border:1.4px solid var(--ink);border-radius:4px;background:#FFF;overflow:hidden;box-shadow:2px 2px 0 rgba(51,53,47,.12)}
+.mimg{position:relative;background:#FFF}
+.mimg img{width:100%;height:150px;object-fit:contain;display:block}
+.mno{position:absolute;top:4px;right:6px;font-family:ui-sans-serif,system-ui,sans-serif;font-size:17px;font-weight:800;color:var(--acc);text-shadow:0 0 3px #FFF,0 0 3px #FFF}
+.mdetail{border-top:1px dashed var(--rule);padding:8px 9px;font-family:ui-sans-serif,system-ui,sans-serif;font-size:12.5px;line-height:1.7;letter-spacing:.03em;color:var(--ink);background:#FFFCF2}
+.mcard{cursor:pointer}
+.mfoot{display:flex;align-items:center;gap:4px;border-top:1px solid var(--rule);padding:4px 7px;background:var(--paper-hi)}
+.mk{font-size:16px;font-weight:700}
+.mkg{color:var(--shu)}
+.marr{font-size:9px;color:var(--pencil)}
+.mpar{margin-left:auto;font-family:ui-sans-serif,system-ui,sans-serif;font-size:8.5px;font-weight:700;letter-spacing:.08em;color:var(--acc)}
+@media (max-width:420px){.mimg img{height:118px}.mk{font-size:14px}}
+.signboard{background:var(--paper-hi);border:1.6px solid var(--ink);border-radius:6px;padding:8px;box-shadow:3px 3px 0 rgba(51,53,47,.14)}
+.mini{border:1.4px solid var(--ink);border-radius:3px;background:var(--paper-hi);padding:5px}
+.minifoot{font-family:ui-sans-serif,system-ui,sans-serif;font-size:9px;letter-spacing:.08em;display:flex;justify-content:space-between;margin-top:3px;color:var(--ink-soft)}
+.clubopt{display:flex;gap:10px;align-items:center;border:1.4px solid var(--ink);border-radius:3px;background:var(--paper-hi);padding:9px 12px;cursor:pointer;font-family:ui-sans-serif,system-ui,sans-serif;font-size:12px}
+.clubopt.none{border-style:dashed;border-color:var(--rule);background:transparent}
+.clubopt b{font-size:13.5px;display:flex;align-items:center;gap:7px;white-space:nowrap}
+.clubopt span.d{color:var(--ink-soft);line-height:1.4}
+.cwrap{display:flex;flex-direction:column;gap:4px}
+.exf{display:flex;align-items:center;gap:5px;flex-wrap:wrap;font-size:13px}
+.exw{border:1.2px solid var(--ink);border-radius:2px;padding:1px 7px;background:#fff;font-family:"Hiragino Mincho ProN","Yu Mincho",serif;letter-spacing:.08em;box-shadow:1.5px 1.5px 0 rgba(51,53,47,.12)}
+.exw b,.exf>b{color:var(--turf)}
+.exop{color:var(--pencil);font-weight:700}
+.exeq{color:var(--acc);font-weight:800;letter-spacing:.05em}
+.exs{font-size:10px;color:var(--gold)}
+.exn{flex-basis:100%;font-size:10.5px;color:var(--pencil);letter-spacing:.04em}
+.notesempty{font-family:ui-sans-serif,system-ui,sans-serif;font-size:12.5px;color:var(--ink-soft);text-align:center;margin:34px 0;line-height:1.9}
+table.notes{width:100%;border-collapse:collapse;font-family:ui-sans-serif,system-ui,sans-serif;font-size:12px;margin-top:12px;background:var(--paper-hi)}
+.notes th,.notes td{border:1px solid var(--rule);padding:7px 6px;text-align:left}
+.notes th{background:linear-gradient(#F6EBCB,#EBDCB2);box-shadow:inset 0 0 0 1.4px var(--gold);font-weight:700;font-weight:600;letter-spacing:.12em}
+.notes td.w{font-family:inherit;font-size:17px}
+.soon{font-family:ui-sans-serif,system-ui,sans-serif;font-size:10.5px;color:var(--pencil);text-align:right;margin-top:8px;letter-spacing:.08em}
+#hud{position:sticky;top:0;z-index:30;background:var(--paper-hi);border:1.4px solid var(--ink);border-radius:0 0 5px 5px;margin:0 -2px 8px;box-shadow:0 2px 6px rgba(51,53,47,.08)}
+.hudline{display:flex;align-items:center;gap:8px;padding:7px 12px;cursor:pointer;user-select:none}
+.hudk{font-size:20px;font-weight:700}
+.hudlie{color:var(--turf)}
+.hudpin{color:var(--shu)}
+.hudarr{color:var(--pencil);font-size:11px}
+.hudscore{margin-left:auto;font-family:ui-sans-serif,system-ui,sans-serif;font-size:12px;font-weight:700;letter-spacing:.12em;color:var(--acc)}
+.hudcaret{font-size:11px;color:var(--pencil)}
+.hudchain{padding:0 12px 9px;font-size:16px;letter-spacing:.1em;line-height:1.8;border-top:1px dashed var(--rule);color:var(--ink-soft)}
+.hudchain b{color:var(--turf)}
+footer{font-family:ui-sans-serif,system-ui,sans-serif;font-size:9.5px;color:var(--pencil);padding:14px;letter-spacing:.14em}
+@media (prefers-reduced-motion:reduce){.wordtile{animation:none}.hanko.stamped{animation:none;opacity:.88}}
+@media (max-width:420px){.bigk{font-size:40px}.wordtile{font-size:21px}.courseview{gap:6px}}
+@media (pointer:coarse){
+  .notemini{padding:5px 10px;font-size:12px}
+  .bag{padding:9px 14px}
+  
+.tab{white-space:nowrap;padding:11px 0}
+  button.ghost{padding:11px 16px}
+  .hudline{padding:11px 12px}
+}
+footer{padding-bottom:calc(14px + env(safe-area-inset-bottom))}
+
+/* ---- storybook (Layton) pass ---- */
+body{background:radial-gradient(130% 100% at 50% 0%, var(--paper-hi) 0%, var(--paper) 55%, #E7D9B8 140%)}
+body::before{content:'';position:fixed;inset:0;z-index:-1;background:url('media/img/paper.jpg') center/600px repeat;opacity:.28;mix-blend-mode:multiply;pointer-events:none}
+.finwrap{position:relative;border:2px solid var(--ink);border-radius:9px;background:var(--paper-hi)}
+.fininner{padding:12px}
+.holecard,.mapcard,.opts,.signboard,.mcard{border-radius:9px;border-width:2px;box-shadow:0 0 0 3px var(--paper-hi),0 0 0 4.5px var(--rule),3px 5px 0 rgba(74,59,40,.16)}
+.btn{border-radius:9px;border:2px solid var(--ink);background:linear-gradient(#FFF9E8,#F0E2BF);color:var(--ink);box-shadow:inset 0 1.5px 0 #FFFDF4,0 2.5px 0 var(--rule),2px 4px 0 rgba(74,59,40,.18);font-weight:700}
+.btn:active{transform:translateY(2px);box-shadow:inset 0 1.5px 0 #FFFDF4,0 1px 0 var(--rule)}
+button.ghost,.qact{border-radius:8px;background:linear-gradient(#FDF8EC,#F3EAD2)}
+button.ghost:hover,.qact:hover{transform:translateY(-1px)}
+
+.tab{white-space:nowrap;border-radius:8px 8px 0 0}
+.tab.active{background:linear-gradient(#FFF9E8,#F1E5C6);color:var(--ink);font-weight:700;box-shadow:inset 0 -3px 0 var(--acc),inset 0 1.5px 0 #FFFDF4}
+.holeno{background:var(--ink);color:#F7EFD9;padding:5px 13px;border-radius:8px;box-shadow:inset 0 0 0 1.4px rgba(247,239,217,.55),1.5px 2.5px 0 rgba(74,59,40,.25);border:none}
+.parbadge{background:linear-gradient(#FFF9E8,#F0E2BF);border:1.6px solid var(--ink);border-radius:8px;box-shadow:1.5px 2px 0 rgba(74,59,40,.18)}
+.sjp{font-size:12.5px}
+.sen{font-size:10.5px;color:var(--ink-soft)}
+.notes td{vertical-align:top}
+.rtimer{font-family:ui-sans-serif,system-ui,sans-serif;font-size:26px;font-weight:800;color:var(--turf);border:2px solid var(--ink);border-radius:9px;background:var(--paper-hi);padding:4px 14px;min-width:64px;display:inline-block}
+.rtimer.hot{color:#fff;background:var(--shu);border-color:var(--shu);animation:hotpulse .6s infinite alternate}
+@keyframes hotpulse{from{transform:scale(1)}to{transform:scale(1.09)}}
+#ptzone{position:absolute;left:50%;top:-4px;pointer-events:none}
+.ptfloat{position:absolute;left:0;top:0;transform:translateX(-50%);font-family:ui-sans-serif,system-ui,sans-serif;font-size:20px;font-weight:800;color:var(--turf);text-shadow:0 0 4px #FFF;animation:ptrise .95s ease-out forwards;white-space:nowrap}
+.ptfloat.ptcombo{color:var(--acc);font-size:24px}
+@keyframes ptrise{from{opacity:1;top:0}to{opacity:0;top:-52px}}
+#combobadge{font-family:ui-sans-serif,system-ui,sans-serif;font-size:13px;font-weight:800;color:var(--acc);margin-top:2px}
+.parkwrap{position:relative;border:2px solid var(--ink);border-radius:10px;overflow:hidden;margin:12px 0;box-shadow:0 0 0 3px var(--paper-hi),0 0 0 4px var(--rule),3px 5px 0 rgba(74,59,40,.18)}
+.parkwrap img{width:100%;display:block}
+.blockmap{display:none;width:100%}
+.parkwrap.noimg .blockmap{display:block}
+.mappin{position:absolute;transform:translate(-50%,-50%);display:flex;flex-direction:column;align-items:center;gap:0;border:2px solid var(--ink);border-radius:50% 50% 50% 4px;background:linear-gradient(#FFF9E8,#F1E5C6);width:40px;height:40px;font-size:17px;cursor:pointer;box-shadow:1.5px 2.5px 0 rgba(74,59,40,.3);padding:0}
+.mappin i{font-style:normal;position:absolute;top:100%;margin-top:2px;font-family:ui-sans-serif,system-ui,sans-serif;font-size:8.5px;font-weight:800;letter-spacing:.06em;color:var(--ink);background:rgba(251,245,230,.92);border-radius:3px;padding:0 4px;white-space:nowrap}
+.mappin:hover:not(.soon){transform:translate(-50%,-56%)}
+.mappin.soon{opacity:.55;filter:grayscale(.5);cursor:default}
+#repbox{position:fixed;inset:0;z-index:90;background:rgba(58,48,32,.45);display:flex;align-items:center;justify-content:center;padding:16px}
+#repbox[hidden]{display:none}
+.reppanel{background:var(--paper-hi);border:2px solid var(--ink);border-radius:11px;box-shadow:0 0 0 3px var(--paper-hi),0 0 0 4.5px var(--rule),4px 6px 0 rgba(74,59,40,.25);padding:14px 16px;max-width:420px;width:100%;max-height:80vh;display:flex;flex-direction:column}
+.replist{overflow-y:auto;display:flex;flex-direction:column;gap:6px}
+.reprow{display:grid;grid-template-columns:auto auto 1fr;gap:8px;align-items:baseline;border:1.2px solid var(--rule);border-radius:6px;background:#FFF;padding:6px 9px;cursor:pointer}
+.reprow b{font-size:18px}
+.repsub{font-family:ui-sans-serif,system-ui,sans-serif;font-size:10.5px;color:var(--ink-soft);line-height:1.6}
+.hubgrid{display:grid;grid-template-columns:repeat(2,1fr);gap:10px;margin:14px 0}
+@media(min-width:640px){.hubgrid{grid-template-columns:repeat(3,1fr)}}
+.hubcard{display:flex;flex-direction:column;align-items:flex-start;gap:3px;text-align:left;padding:13px 14px;border:2px solid var(--ink);border-radius:10px;background:linear-gradient(#FDF8EC,#F3EAD2);cursor:pointer;box-shadow:0 0 0 3px var(--paper-hi),0 0 0 4px var(--rule),2.5px 4px 0 rgba(74,59,40,.16);font-family:inherit;color:var(--ink)}
+.hubcard b{font-size:15px;letter-spacing:.1em}
+.hubcard:hover:not(.soon){transform:translateY(-2px)}
+.hubicon{font-size:26px}
+.hubdesc{font-family:ui-sans-serif,system-ui,sans-serif;font-size:10.5px;color:var(--ink-soft);line-height:1.5}
+.hubcard.soon{opacity:.55;filter:grayscale(.4);cursor:default}
+.tenscore{font-family:ui-sans-serif,system-ui,sans-serif;font-size:16px;letter-spacing:.08em}
+.tenscore b{font-size:24px;color:var(--acc)}
+.tenclockwrap{height:8px;border:1.3px solid var(--ink);border-radius:6px;background:#FFFCF2;max-width:340px;margin:8px auto;overflow:hidden}
+.tenclock{height:100%;width:100%;background:var(--turf);transition:width 1s linear}
+.tenclock.hot{background:var(--shu)}
+.tenchain{display:flex;flex-direction:column;gap:5px;max-height:200px;overflow-y:auto;max-width:400px;margin:8px auto;padding:8px;border:1.3px solid var(--rule);border-radius:6px;background:var(--paper-hi)}
+.tenshot{display:flex}
+.tenshot.tleft{justify-content:flex-start}
+.tenshot.tright{justify-content:flex-end}
+.zukanbox{border:2px solid var(--ink);border-radius:9px;background:var(--paper-hi);padding:10px 12px;margin:8px 0;box-shadow:0 0 0 3px var(--paper-hi),0 0 0 4px var(--rule)}
+.zchips{display:flex;flex-wrap:wrap;gap:5px;max-height:150px;overflow-y:auto}
+.zchip{display:inline-flex;align-items:center;gap:3px;border:1.2px solid var(--rule);border-radius:5px;background:#FFF;padding:2px 7px;font-size:15px}
+.rulebig p{margin:6px 0;line-height:2.1}
+.ruletiles{border:1.6px solid var(--ink);border-radius:9px;background:var(--paper-hi);padding:12px;margin:8px 0;display:flex;flex-wrap:wrap;align-items:center;gap:7px}
+.rtile{display:inline-flex;width:44px;height:44px;align-items:center;justify-content:center;font-size:24px;font-weight:700;border:2px solid var(--ink);border-radius:6px;background:#FFF}
+.rtile.rgoal{color:var(--shu);border-color:var(--shu)}
+.rword{font-size:20px;font-weight:600;border:1.4px solid var(--ink);border-radius:5px;background:#FFF;padding:5px 9px}
+.rword b{color:var(--turf)}
+.rarrow{color:var(--pencil)}
+.rcap{width:100%;font-family:ui-sans-serif,system-ui,sans-serif;font-size:11px;color:var(--ink-soft);line-height:1.8}
+.hdetail summary{cursor:pointer;color:var(--turf);font-weight:700;margin:8px 0;font-size:13px}
+.lbbox{border:2px solid var(--ink);border-radius:9px;background:var(--paper-hi);padding:8px 12px;margin:2px 0 8px;max-width:300px;box-shadow:0 0 0 3px var(--paper-hi),0 0 0 4px var(--rule),2px 3px 0 rgba(74,59,40,.14)}
+.lbtitle{font-family:ui-sans-serif,system-ui,sans-serif;font-size:10px;font-weight:800;letter-spacing:.3em;color:var(--turf);margin-bottom:4px}
+.lbme{background:rgba(224,123,57,.14);border-radius:4px}
+.lbrow{display:flex;align-items:center;gap:8px;font-family:ui-sans-serif,system-ui,sans-serif;font-size:12.5px;padding:2px 0}
+.lbmedal{width:20px;text-align:center}
+.lbname{font-weight:700}
+.lbscore{margin-left:auto;color:var(--acc);font-weight:800}
+.holelist{border:1.5px solid var(--rule);border-radius:8px;background:var(--paper-hi);padding:4px 10px;margin:6px 0}
+.hlrow{display:flex;align-items:center;gap:8px;padding:6px 2px;border-bottom:1px dashed var(--rule)}
+.hlrow:last-child{border-bottom:none}
+.grouplabel{font-family:ui-sans-serif,system-ui,sans-serif;font-size:9.5px;font-weight:800;letter-spacing:.34em;color:var(--turf);margin-top:6px}
+.chapterplate{display:flex;flex-direction:column;align-items:center;gap:1px;margin:14px 0 6px}
+.chapen{font-family:ui-sans-serif,system-ui,sans-serif;font-size:10px;font-weight:800;letter-spacing:.5em;color:var(--acc)}
+.chapname{font-size:26px;font-weight:700;letter-spacing:.24em;color:var(--ink)}
+.chapdiv{font-size:10px;color:var(--pencil);letter-spacing:.3em}
+.pill{border-radius:7px}
+.hudline{border-radius:0 0 8px 8px}
+#hud{border-radius:0 0 9px 9px;box-shadow:0 0 0 3px var(--paper-hi),0 3px 6px rgba(74,59,40,.14)}
+input#wordin,.bK,#loginName{border-radius:8px;background:#FFFCF2}
+.card{box-shadow:2px 3px 0 rgba(74,59,40,.14);border-radius:8px;overflow:hidden}
+
+/* ---- facility themes ---- */
+body{transition:background .35s,color .35s}
+body.t-sport{--paper:#F7F9FA;--paper-hi:#FFFFFF;--ink:#20303C;--ink-soft:#51636F;--rule:#DCE5EA;--pencil:#93A3AD;--acc:#2B7BE4;--turf:#1F9D5B;--gold:#D89614;background:linear-gradient(#FFFFFF,#EFF4F7)}
+body.t-sport::before{display:none}
+body.t-golf{--paper:#EFF6EC;--paper-hi:#F8FBF5;--ink:#2C4A36;--ink-soft:#587662;--rule:#D6E6D2;--pencil:#8FAE96;--acc:#E07B39;--gold:#A67F2E;background:radial-gradient(130% 100% at 50% 0%,#F8FBF5 0%,#EFF6EC 55%,#DFEDDA 140%)}
+body.t-tennis{--paper:#EFF5FB;--paper-hi:#FFFFFF;--ink:#123A6B;--ink-soft:#4A6A93;--rule:#CFE0F2;--pencil:#8FAAC8;--acc:#1F6FEB;--turf:#1F6FEB;--gold:#D89614;background:linear-gradient(#FFFFFF,#E4EEF9)}
+body.t-tennis::before{display:none}
+</style>
+</head>
+<body class="t-sport">
+<div id="login" style="position:fixed;inset:0;z-index:100;background:var(--paper);display:none;align-items:center;justify-content:center">
+  <div style="border:1.6px solid var(--ink);border-radius:5px;background:var(--paper-hi);padding:26px 26px;max-width:340px;width:88%;box-shadow:3px 3px 0 rgba(51,53,47,.15);text-align:center">
+    <div style="font-size:22px;letter-spacing:.3em;font-weight:700">漢字ゴルフ</div>
+    <div style="font-family:ui-sans-serif,system-ui,sans-serif;font-size:11px;letter-spacing:.2em;color:var(--ink-soft);margin:4px 0 14px">JOYO SPORTS CENTER · ことばの総合運動場</div>
+    <div style="font-family:ui-sans-serif,system-ui,sans-serif;font-size:12px;color:var(--turf);font-weight:700;margin:0 0 10px">⛳ 🎾 🤼 — 今日はどれで汗をかく？</div>
+    <div style="font-family:ui-sans-serif,system-ui,sans-serif;font-size:13px;line-height:2;text-align:left;border:1px dashed var(--rule);border-radius:4px;padding:8px 12px;margin-bottom:14px">
+      漢字から漢字へ、熟語でつなぐゴルフ。<br>
+      <span class="exf" style="justify-content:center"><b>学</b><span class="exop">→</span><span class="exw">学校</span><span class="exop">→</span><span class="exw">校長</span><span class="exop">→</span><b>長</b><span class="exop">…</span>⛳</span>
+      少ない熟語数（打数）でピンの字へ。
+    </div>
+    <input id="loginName" placeholder="ユーザー名（英数字 3〜12）" maxlength="12" autocapitalize="off" autocorrect="off" spellcheck="false" style="width:100%;font-family:inherit;font-size:16px;padding:10px 12px;border:1.5px solid var(--ink);border-radius:8px;background:#fff;margin-bottom:6px">
+    <input id="loginPass" type="password" placeholder="パスワード（4文字以上）" maxlength="30" style="width:100%;font-family:inherit;font-size:16px;padding:10px 12px;border:1.5px solid var(--ink);border-radius:8px;background:#fff;margin-bottom:4px">
+    <div id="loginStat" style="font-family:ui-sans-serif,system-ui,sans-serif;font-size:11px;min-height:16px;margin-bottom:8px;letter-spacing:.05em;color:var(--pencil)"></div>
+    <button class="btn" id="loginGo" style="width:100%">ティーオフへ ▸</button>
+    <button class="ghost" id="loginGuest" style="width:100%;margin-top:8px;border-style:dashed">ゲストで遊ぶ</button>
+  </div>
+</div>
+<svg class="grain" aria-hidden="true"><filter id="gr"><feTurbulence type="fractalNoise" baseFrequency=".8" numOctaves="2"/></filter><rect width="100%" height="100%" filter="url(#gr)"/></svg>
+<header>
+  <h1>漢字ゴルフ<small>JOYO COUNTRY CLUB · EAST</small></h1>
+  <div class="hright">
+    <div class="datebox">本日のコース · FRONT 9 · PAR <span id="coursepar"></span></div>
+    <button class="iconbtn" id="gearbtn" aria-label="設定">
+      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M5 21 L15 4 M15 4 l 3.4 -1.4 M15 4 l 1.4 3.4"/><path d="M19 21 L9 4 M9 4 l -3.4 -1.4 M9 4 l -1.4 3.4"/></svg>
+      設定</button>
+  </div>
+</header>
+<div class="tabs">
+  <button class="tab active" id="tabRound">⛳ ゴルフ</button>
+  <button class="tab" id="tabNotes">🏋 ジム <span id="notebadge"></span></button>
+  <button class="tab" id="tabHelp">遊び方</button>
+  <button class="tab" id="tabHub">🏟 ホーム</button>
+  <button class="tab" id="tabTennis">🎾 テニス</button>
+  <button class="tab" id="tabSumo">🤼 相撲</button>
+  <button class="tab" id="tabMaker" hidden>管理</button>
+</div>
+<div class="tabline"></div>
+<main>
+<div class="opts" id="opts" hidden>
+  <label><input type="checkbox" id="optLearner"> 学習モード（ふりがな・意味・キャディ）</label>
+  <label><input type="checkbox" id="optSound" checked> サウンド</label>
+  <label><input type="checkbox" id="optClubs" checked> 特殊クラブ（実験）</label>
+  <label><input type="checkbox" id="optAnim" checked> アニメーション</label>
+  <label><input type="checkbox" id="optBigKanji"> 文字を大きく</label>
+  <button class="ghost" id="optClearNotes" style="padding:5px 10px;font-size:11px">ノート全消去</button>
+  <button class="ghost" id="optUser" style="padding:5px 10px;font-size:11px">ログアウト</button>
+  <button class="ghost" id="optDev" style="padding:5px 10px;font-size:11px">開発者</button>
+  <span style="font-size:10px;color:var(--pencil);letter-spacing:.1em;margin-left:auto">PROTOTYPE BUILD</span>
+</div>
+<div id="viewRound">
+  <div id="preround">
+    <details style="border:1.4px solid var(--rule);border-radius:4px;background:var(--paper-hi);margin:10px 0;font-family:ui-sans-serif,system-ui,sans-serif;font-size:12.5px;line-height:1.9">
+      <summary style="padding:9px 14px;cursor:pointer;letter-spacing:.18em;font-weight:600;color:var(--turf)">遊び方 — HOW TO PLAY</summary>
+      <div style="padding:2px 16px 12px;color:var(--ink-soft)">
+        <b style="color:var(--ink)">ゴール:</b> ティーの漢字からピンの漢字まで、熟語しりとりでつなぐゴルフです。<br>
+        <b style="color:var(--ink)">打ち方:</b> いまの漢字で<b>始まる</b>熟語（2〜4字）を入力。語尾の字が次のライ（現在地）になります。例: 学 →「学校」→ 校 →「校長」→ 長…<br>
+        <b style="color:var(--ink)">スコア:</b> 少ない打数（熟語数）でピンの字に到達するほど良い。パー以下を狙いましょう。<br>
+        <b style="color:var(--ink)">▚ 隠しカット:</b> 珍しい熟語だけが通れる近道。マップの金色の点線が目印。<br>
+        <b style="color:var(--ink)">クラブ:</b> スタート前に特殊クラブを1本選べます。プレー中にタップで抜いて、特別な一打を。<br>
+        <b style="color:var(--ink)">ノート:</b> 出てきた熟語は「＋」で自習ノートへ。ギブアップしても模範ルートから学べます。
+      </div>
+    </details>
+    <div class="sub" style="margin-top:8px">スタート前の下見。全9ホールのコースガイドです。<br>▚ 印は「藪の切れ目」— 珍しい熟語だけが通れる隠しカット。</div>
+    <div class="chapterplate" id="chapterplate"></div>
+    <div id="coursechips"></div>
+    <div class="toolrow" style="margin:2px 0 8px"><button class="ghost" onclick="goRange()">🏌 練習レンジ</button><button class="ghost" onclick="goBuild()">🛠 コース工房</button><button class="ghost" onclick="goCom()">🌐 コミュニティ</button></div>
+    <div class="sub" id="coursebest" style="margin:0 0 4px;color:var(--acc);font-weight:700"></div>
+    <div class="sub" id="coursestats" style="margin:0 0 4px;color:var(--ink-soft)"></div>
+    <div id="lb"></div>
+    <div class="courseview" id="courseview"></div>
+    <div id="clubpick" style="display:flex;flex-direction:column;gap:8px;margin:12px 0"></div>
+    <div class="toolrow"><button class="btn" id="teeoff">ティーオフ ▸</button></div>
+  </div>
+  <div id="game" hidden>
+    <div id="hud">
+      <div class="hudline" id="hudline">
+        <span class="hudk" id="hudTee"></span><span class="hudarr">▸</span><span class="hudk hudlie" id="hudLie"></span><span class="hudarr">▸</span><span class="hudk hudpin" id="hudPin"></span>
+        <span class="hudscore" id="hudScore"></span><span class="hudcaret" id="hudCaret">▾</span>
+      </div>
+      <div class="hudchain" id="hudChain" hidden></div>
+    </div>
+    <div class="holecard">
+      <span class="holeno" id="holelabel"></span>
+      <span class="parbadge">PAR <span id="holepar"></span></span>
+    </div>
+    <div class="playgrid">
+    <div class="pgleft">
+      <div class="teeline">
+        <span class="tee"><span class="bigk" id="teek"></span></span>
+        <span class="fairway-arrow"></span>
+        <span class="pin"><span class="bigk" id="pink"></span></span>
+      </div>
+      <div class="mapwrap"><div class="mapcard">
+        <svg id="holemap" width="248" height="382" viewBox="0 0 260 400" role="img" aria-label="ホールの俯瞰図"></svg>
+      </div></div>
+      <div class="sideacts" id="sideacts">
+        <button class="qact" id="undo">↩ 戻す −1打</button>
+        <button class="qact" id="giveup">🏳 ギブアップ</button>
+        <span id="assistrow" hidden>
+          <button class="qact" id="probtn" style="display:none;border-color:var(--gold);color:var(--gold)">プロの一打</button>
+          <button class="qact" id="commonbtn" style="display:none">定番の一打</button>
+        </span>
+        <button class="qact" id="forfeit" style="border-style:dashed">⌂ コース選択へ（棄権）</button>
+      </div>
+    </div>
+    <div class="pgright">
+    <div class="caddie" id="caddie"></div>
+    <div id="playzone">
+      <div class="toolrow" id="clubrow" style="margin:0 0 8px"></div>
+      <div class="inputrow">
+        <input id="wordin" lang="ja" autocomplete="off" autocapitalize="off" autocorrect="off" spellcheck="false" enterkeyhint="go" aria-label="熟語を入力">
+        <button class="btn" id="swing">打つ</button>
+      </div>
+      <div class="msg" id="msg" role="status" aria-live="polite"></div>
+    </div>
+    <div class="chainhead"><span>あなたのライン</span><span class="sub" style="margin:0;font-size:10px">いまの漢字で始まる2〜4字の熟語で前へ</span></div>
+    <div class="chain" id="chain"></div>
+    </div><!--/pgright-->
+    </div><!--/playgrid-->
+    <div id="resultzone" hidden>
+      <div class="resultflag" id="resulttxt"></div>
+      <div class="toolrow"><button class="btn" id="nexthole">次のホールへ ▸</button></div>
+    </div>
+    <table class="card"><thead><tr id="cardholes"><th>HOLE</th></tr></thead>
+      <tbody><tr id="cardpars"><th>PAR</th></tr><tr id="cardscores"><th>SCORE</th></tr></tbody></table>
+    <div class="finwrap" id="finalzone" hidden><div class="fininner" id="fininner">
+      <svg class="hanko" id="hanko" viewBox="0 0 80 80">
+        <circle cx="40" cy="40" r="36" fill="none" stroke="#B23A2F" stroke-width="3.4"/>
+        <circle cx="40" cy="40" r="30" fill="none" stroke="#B23A2F" stroke-width="1.4"/>
+        <text x="40" y="50" text-anchor="middle" font-size="24" fill="#B23A2F" font-weight="700" font-family="serif">検定</text>
+      </svg>
+      <div id="finlb"></div>
+      <div class="resultflag" id="finaltxt"></div>
+      <div class="sharebox" id="sharetext"></div>
+      <div class="toolrow"><button class="btn" id="copybtn">スコアをコピー</button></div>
+      <div class="toolrow" id="againrow"></div>
+    </div>
+  </div>
+</div>
+</div>
+<div id="repbox" hidden>
+  <div class="reppanel">
+    <div class="lbtitle" id="reptitle" style="font-size:12px">レポート</div>
+    <div class="replist" id="replist"></div>
+    <div class="toolrow" style="margin-top:8px">
+      <button class="btn" id="repSaveSel" style="flex:1;padding:8px">選択をジムへ</button>
+      <button class="ghost" id="repSaveAll" style="padding:8px 12px">すべて</button>
+      <button class="ghost" id="repClose" style="padding:8px 12px">閉じる</button>
+    </div>
+  </div>
+</div>
+<div id="viewHub" hidden>
+  <div class="chapterplate" style="margin-top:16px"><span class="chapen">JOYO SPORTS CENTER</span><span class="chapname">常用スポーツセンター</span><span class="chapdiv" id="hubHello">— ことばで、汗をかこう —</span></div>
+  <div class="parkwrap" id="parkwrap">
+    <img src="media/img/parkmap.jpg" alt="園内マップ" onerror="this.hidden=true;this.parentElement.classList.add('noimg')">
+    <svg class="blockmap" viewBox="0 0 711 566"><rect width="711" height="566" fill="#DFF0DC"/><rect x="60" y="60" width="240" height="150" fill="#C8E4C2" stroke="#8FAE96"/><rect x="380" y="80" width="220" height="120" fill="#C8E4C2" stroke="#8FAE96"/><rect x="120" y="300" width="200" height="160" fill="#C8E4C2" stroke="#8FAE96"/><rect x="420" y="300" width="180" height="180" fill="#C8E4C2" stroke="#8FAE96"/><path d="M0 260 Q 355 220 711 260" stroke="#B9CFC0" stroke-width="14" fill="none"/></svg>
+    <button class="mappin" style="left:61.5%;top:47.2%" data-go="golf">⛳<i>ゴルフ</i></button>
+    <button class="mappin" style="left:49.8%;top:67.8%" data-go="range">🏌<i>レンジ</i></button>
+    <button class="mappin" style="left:62.9%;top:27.6%" data-go="tennis">🎾<i>テニス</i></button>
+    <button class="mappin" style="left:66.8%;top:62.4%" data-go="sumo">🤼<i>相撲</i></button>
+    <button class="mappin" style="left:44.3%;top:43.4%" data-go="club">🏋<i>ジム</i></button>
+    <button class="mappin" style="left:26.4%;top:56.2%" data-go="build">🛠<i>工房</i></button>
+    <button class="mappin" style="left:55.6%;top:34.2%" data-go="help">📖<i>遊び方</i></button>
+    <button class="mappin soon" style="left:73.3%;top:64.3%" disabled>🏹<i>弓道 SOON</i></button>
+    <button class="mappin soon" style="left:64.8%;top:76.7%" disabled>⚾<i>SOON</i></button>
+    <button class="mappin soon" style="left:55.1%;top:81.6%" disabled>🎳<i>SOON</i></button>
+    <button class="mappin soon" style="left:37.7%;top:60.3%" disabled>🏊<i>SOON</i></button>
+  </div>
+  <div class="hubgrid">
+    <button class="hubcard" data-go="sumo"><span class="hubicon">🤼</span><b>相撲場</b><span class="hubdesc">語彙で押し合う対戦格闘。番付を駆け上がれ。</span></button>
+    <button class="hubcard" data-go="golf"><span class="hubicon">⛳</span><b>ゴルフコース</b><span class="hubdesc">熟語しりとりで9ホール。看板競技。</span></button>
+    <button class="hubcard" data-go="range"><span class="hubicon">🏌</span><b>練習レンジ</b><span class="hubdesc">1つの漢字で何語打てる？ 1分チャレンジも。</span></button>
+    <button class="hubcard" data-go="tennis"><span class="hubicon">🎾</span><b>テニスコート</b><span class="hubdesc">語尾を打ち返すラリー対戦。CPU・2人プレイ。</span></button>
+    <button class="hubcard" data-go="club"><span class="hubicon">🏋</span><b>ジム</b><span class="hubdesc">ことば図鑑・自習ノート・各試合のレポート保存先。</span></button>
+    <button class="hubcard" data-go="build"><span class="hubicon">🛠</span><b>コース工房</b><span class="hubdesc">自分のコースを設計して公開。</span></button>
+    <button class="hubcard" data-go="help"><span class="hubicon">📖</span><b>遊び方</b><span class="hubdesc">3行でわかるルール。</span></button>
+    <button class="hubcard soon" disabled><span class="hubicon">🎳</span><b>ボウリング場</b><span class="hubdesc">10本の漢字ピンを熟語で倒す。COMING SOON</span></button>
+    <button class="hubcard soon" disabled><span class="hubicon">⚾</span><b>バッティングセンター</b><span class="hubdesc">珍しい語ほど飛距離が伸びる。COMING SOON</span></button>
+    <button class="hubcard soon" disabled><span class="hubicon">🏊</span><b>プール</b><span class="hubdesc">重複なしで何往復つなげる？ COMING SOON</span></button>
+    <button class="hubcard soon" disabled><span class="hubicon">🏹</span><b>弓道場</b><span class="hubdesc">ぴったりN語で的の字を射抜く。COMING SOON</span></button>
+  </div>
+</div>
+<div id="viewTennis" hidden>
+  <div class="holecard" style="margin-top:14px"><span class="holeno">テニスコート · RALLY</span></div>
+  <div class="sub" style="text-align:left;margin:8px 0 4px">相手の語の<b>最後の字</b>で始まる熟語（2〜4字）を打ち返す。返せなければ相手のポイント。4ポイント先取でゲーム。</div>
+  <div class="opts" style="text-align:center;padding:14px">
+    <div class="toolrow" style="justify-content:center" id="tenSetup">
+      <button class="btn" id="tenVsCpu" style="padding:9px 16px">CPUと対戦</button>
+      <button class="ghost" id="tenVs2p" style="padding:9px 16px">2人でプレイ</button>
+    </div>
+    <div id="tenGame" hidden>
+      <div class="tenscore"><span id="tenN0">あなた</span> <b id="tenP0">0</b> — <b id="tenP1">0</b> <span id="tenN1">CPU</span></div>
+      <div class="tenclockwrap"><div class="tenclock" id="tenClock"></div></div>
+      <div class="sub" id="tenTurn" style="margin:4px 0"></div>
+      <div style="font-size:44px;font-weight:700" id="tenNeed"></div>
+      <div class="inputrow" style="max-width:340px;margin:6px auto">
+        <input id="tenin" lang="ja" autocomplete="off" autocapitalize="off" autocorrect="off" spellcheck="false" enterkeyhint="go" aria-label="熟語を入力">
+        <button class="btn" id="tenswing">返す</button>
+      </div>
+      <div class="msg" id="tenmsg" role="status" aria-live="polite"></div>
+      <div class="tenchain" id="tenchain"></div>
+      <div class="toolrow" style="justify-content:center"><button class="ghost" id="tenQuit">コートを出る</button></div>
+    </div>
+  </div>
+</div>
+<div id="viewRange" hidden>
+  <div class="holecard" style="margin-top:14px"><span class="holeno">練習レンジ · DRIVING RANGE</span></div>
+  <div class="toolrow" style="margin:4px 0 0"><button class="ghost" onclick="goGolf()" style="padding:5px 10px;font-size:11px">← ゴルフへ戻る</button></div>
+  <div class="sub" style="text-align:left;margin:8px 0 4px">お題の漢字で始まる熟語（2〜4字）を知っているだけ打とう。3語で次の球へ。</div>
+  <div class="opts" style="text-align:center;padding:18px 14px">
+    <div class="toolrow" style="justify-content:center;margin-bottom:6px">
+      <button class="btn" id="rangeTimed" style="padding:8px 16px">⏱ 1分チャレンジ</button>
+      <span class="rtimer" id="rangeTimer" hidden>60</span>
+    </div>
+    <div style="font-family:ui-sans-serif,system-ui,sans-serif;font-size:10px;font-weight:800;letter-spacing:.4em;color:var(--acc)">TEE BALL</div>
+    <div style="position:relative;display:inline-block"><div id="rangeK" style="font-size:64px;font-weight:700;line-height:1.15"></div><div id="ptzone"></div></div>
+    <div id="combobadge" hidden></div>
+    <div class="sub" id="rangeStat" style="margin:2px 0 10px"></div>
+    <div class="inputrow" style="max-width:340px;margin:0 auto">
+      <input id="rangein" lang="ja" autocomplete="off" autocapitalize="off" autocorrect="off" spellcheck="false" enterkeyhint="go" aria-label="熟語を入力">
+      <button class="btn" id="rangeswing">打つ</button>
+    </div>
+    <div class="msg" id="rangemsg" role="status" aria-live="polite"></div>
+    <div class="chain" id="rangefound" style="max-height:130px;margin:8px auto;max-width:400px"></div>
+    <div class="toolrow" style="justify-content:center">
+      <button class="btn" id="rangenext" disabled>次の球へ →</button>
+      <button class="ghost" id="rangeidk">思いつかない…</button>
+      <button class="ghost" id="rangepass" hidden>パス →</button>
+    </div>
+    <div id="rangesugg" hidden style="text-align:left;max-width:400px;margin:10px auto;border:1.6px solid var(--ink);border-radius:9px;background:var(--paper-hi);padding:10px 12px">
+      <b style="font-size:13px">よく使う熟語 — ノートに入れる語を選んでください（<span id="rangeneed"></span>語以上）</b>
+      <div id="rangesugglist" style="margin:8px 0"></div>
+      <button class="btn" id="rangesuggok" disabled style="width:100%;padding:9px">ノートに追加して次の球へ</button>
+    </div>
+    <div class="sub" style="margin:10px 0 0">セッション: <b id="rangepts">0</b> pt ・ <span id="rangeballs">0</span> 球</div>
+    <div id="rangeResult" hidden style="margin:12px auto 0;max-width:340px;border:2px solid var(--ink);border-radius:9px;background:var(--paper-hi);padding:12px;box-shadow:0 0 0 3px var(--paper-hi),0 0 0 4px var(--rule)">
+      <div style="font-family:ui-sans-serif,system-ui,sans-serif;font-size:10px;font-weight:800;letter-spacing:.3em;color:var(--acc)">TIME!</div>
+      <div id="rangeResultPts" style="font-size:30px;font-weight:700"></div>
+      <div class="toolrow" style="margin-top:6px">
+        <button class="btn" id="rangeAgain" style="flex:1;padding:9px">もう一度 ⏱</button>
+        <button class="ghost" id="rangeClose" style="padding:9px 14px">閉じる</button>
+      </div>
+    </div>
+    <div class="lbbox" id="rangeLB" hidden style="margin:12px auto 0;text-align:left"></div>
+  </div>
+</div>
+<div id="viewCom" hidden>
+  <div class="holecard" style="margin-top:14px"><span class="holeno">コミュニティコース</span></div>
+  <div class="toolrow" style="margin:4px 0 0"><button class="ghost" onclick="goGolf()" style="padding:5px 10px;font-size:11px">← ゴルフへ戻る</button></div>
+  <div class="toolrow" style="margin:8px 0"><button class="ghost" id="comRefresh">↻ 更新</button></div>
+  <div id="comlist"></div>
+</div>
+<div id="viewHelp" hidden>
+  <div class="holecard" style="margin-top:14px"><span class="holeno">遊び方 · HOW TO PLAY</span></div>
+  <div class="toolrow" style="justify-content:flex-start;margin:4px 0 10px"><button class="ghost hlang" data-l="ja" style="background:var(--ink);color:var(--paper)">日本語</button><button class="ghost hlang" data-l="en">English</button><button class="ghost hlang" data-l="ko">한국어</button><button class="ghost hlang" data-l="zh">中文</button></div>
+  <div style="font-family:ui-sans-serif,system-ui,sans-serif;font-size:13px;line-height:2;color:var(--ink-soft)">
+    <div class="hsec" id="help_ja">
+    <div class="rulebig">
+      <p style="font-size:15px;color:var(--ink)"><b>ピンの字まで、熟語でつなぐゴルフ。</b></p>
+      <p>① いまの字で<b>始まる</b>熟語（2〜4字）を打つ。<br>② 熟語の<b>最後の字</b>が、次の「いまの字」になる。<br>③ <b>ピンの字</b>に着いたらホールアウト。<b>使った熟語の数＝打数</b>。少ないほど強い。</p>
+    </div>
+    <div class="ruletiles">
+      <span class="rtile rstart">学</span><span class="rarrow">→</span>
+      <span class="rword">学<b>校</b></span><span class="rarrow">→</span>
+      <span class="rword">校<b>長</b></span><span class="rarrow">→</span>
+      <span class="rword">長<b>所</b></span><span class="rarrow">→</span>
+      <span class="rtile rgoal">所</span>
+      <div class="rcap">学 から 所 まで3語＝<b>3打</b>。パー3のホールなら<b>パー</b>。2語でつなげたら<b>バーディー</b>。遠回りしても大丈夫 — 打数が増えるだけです。</div>
+    </div>
+    <details class="hdetail"><summary>くわしく（クラブ・マップ・記録）</summary>
+    <b>マップ:</b> オレンジの輪＝あと◯語の距離リング。✨の珍しい語は「藪の切れ目 ▚」— パー以下への隠れ道を通れることがあります。<br>
+    <b>クラブ:</b> スタート前にバッグへ最大3本。特殊ショットはラウンド3回・同一ホール1回。ドライバー＝パー5ティー専用で1打2語／スプーン＝直前の語の途中の字から発進／難読アイアン＝珍しい音読みの仲間へ跳ぶ／ロブ＝いまの字で「終わる」語で頭へ戻る／地名＝駅名・地名OK。<br>
+    <b>学び:</b> 出た語は「＋」で自習ノートへ（読み・意味・例文つき）。ギブアップしてもお手本ルートから語彙を拾えます。
+    </details>
+    </div>
+    <div class="hsec" id="help_en" hidden>
+    <div class="rulebig"><p style="font-size:15px;color:var(--ink)"><b>Golf, but you connect kanji with real words.</b></p>
+    <p>① Play a 2–4 kanji word that <b>starts with</b> your current kanji.<br>② Its <b>last kanji</b> becomes your new position.<br>③ Reach the <b>pin kanji</b> to hole out. <b>Words used = strokes. Fewer is better.</b></p></div>
+    <div class="ruletiles"><span class="rtile rstart">学</span><span class="rarrow">→</span><span class="rword">学<b>校</b></span><span class="rarrow">→</span><span class="rword">校<b>長</b></span><span class="rarrow">→</span><span class="rword">長<b>所</b></span><span class="rarrow">→</span><span class="rtile rgoal">所</span>
+    <div class="rcap">3 words = 3 strokes. On a par 3 that's par; 2 words = birdie. Detours are fine — they just cost strokes.</div></div>
+<h3 style="color:var(--ink);letter-spacing:.15em;margin:14px 0 4px;font-size:14px">THE BASICS (EN)</h3>
+    Kanji Golf is word-chain golf. Link the tee kanji to the pin kanji using real Japanese compound words (2–4 kanji). Each word must <b>start</b> with your current kanji; its <b>last kanji</b> becomes your new lie. Reach the pin — every word is one stroke. Beat par for birdies and eagles.<br>
+    Example (par 3): <b>学</b> → 学校 → 校 → 校長 → 長 → 長所 → <b>所</b> ⛳<br>
+    Rare words (✨) can slip through the "gap in the thicket" ▚ — hidden shortcuts below par.
+    <h3 style="color:var(--ink);letter-spacing:.15em;margin:14px 0 4px;font-size:14px">READING THE MAP</h3>
+    Green band = fairway; outside = rough. Blue = water (your ball can't rest there). Stippled sand = bunkers (dead-end kanji). Gold dashes hint a hidden cut exists. Orange arcs are distance rings: strokes remaining to the pin.
+    <h3 style="color:var(--ink);letter-spacing:.15em;margin:14px 0 4px;font-size:14px">CLUBS</h3>
+    Pick up to <b>3 clubs</b> before the round; <b>3 special shots total, max 1 per hole</b>. Tap a club to draw it, then type a word matching its rule: Driver — par-5 tees only, two words in one stroke (e.g. 学校＋校長 = one stroke, lie moves to 長). Spoon — launch from any kanji inside your last word (after 社交界, play 交通 from the middle 交). Rare-Reading Iron — pivot via an uncommon shared on-yomi (遺 and 唯 share ユイ, so from 遺 you may play 唯一). Lob Wedge — play a word <b>ending</b> in your kanji and return to its head (on 口, play 入口 → lie becomes 入). Gazetteer Wedge — place & station names (目黒, 神戸…).
+    <h3 style="color:var(--ink);letter-spacing:.15em;margin:14px 0 4px;font-size:14px">LEARNING</h3>
+    Tap ＋ on any word to save it to your study notes (reading + meaning included). Learner mode (⚙) adds furigana, glosses, and two caddies. Even a give-up teaches: the model route is one tap from your notebook.
+  </div>
+    <div class="hsec" id="help_ko" hidden><h3 style="color:var(--ink);letter-spacing:.15em;margin:14px 0 4px;font-size:14px">기본 규칙</h3>티(출발) 한자에서 핀(목표) 한자까지 <b>한자 끝말잇기</b>로 연결하는 골프입니다. 현재 한자로 <b>시작하는</b> 일본어 숙어(한자 2~4자)를 입력하면, 그 단어의 <b>마지막 한자</b>가 다음 위치가 됩니다. 핀 한자에 도달하면 홀아웃 — 사용한 단어 수가 타수입니다. 파보다 적으면 버디·이글!<br>예 (파3): <b>学</b> → 学校 → 校 → 校長 → 長 → 長所 → <b>所</b> ⛳<br>희귀한 단어(✨)는 「덤불 사이의 틈 ▚」— 파 이하로 가는 숨겨진 지름길을 열 수 있습니다.<h3 style="color:var(--ink);letter-spacing:.15em;margin:14px 0 4px;font-size:14px">맵 보는 법</h3>초록 띠는 페어웨이, 바깥은 러프. 파란색은 연못(공이 멈출 수 없음), 점 찍힌 모래는 벙커(출구가 적은 한자). 금색 점선은 숨겨진 지름길의 힌트, 주황색 호는 「남은 타수」 거리 링입니다.<h3 style="color:var(--ink);letter-spacing:.15em;margin:14px 0 4px;font-size:14px">클럽</h3>라운드 시작 전 가방에 <b>최대 3개</b>. 특수 샷은 <b>라운드당 총 3회, 홀당 1회</b>. 칩을 탭해 클럽을 꺼낸 뒤 조건에 맞는 단어를 입력하세요.<br>・<b>드라이버</b> — 파5 티 전용. 한 타에 단어 2개 연속.<br>・<b>스푼</b> — 직전 단어 속 아무 한자에서나 시작.<br>・<b>난독 아이언</b> — 희귀한 음독을 공유하는 한자로 이동 후 샷.<br>・<b>로브 웨지</b> — 현재 한자로 <b>끝나는</b> 단어를 쳐서 첫 글자로 복귀.<br>・<b>지명 웨지</b> — 지명·역 이름 사용 가능.<h3 style="color:var(--ink);letter-spacing:.15em;margin:14px 0 4px;font-size:14px">학습에 활용</h3>나온 단어는 「＋」로 학습 노트에 저장(읽기·뜻 포함). 학습 모드(⚙)에서는 후리가나, 뜻풀이, 캐디(프로/정석) 기능을 쓸 수 있습니다. 기브업해도 모범 루트에서 어휘를 얻을 수 있어요.</div>
+    <div class="hsec" id="help_zh" hidden><h3 style="color:var(--ink);letter-spacing:.15em;margin:14px 0 4px;font-size:14px">基本规则</h3>这是一场用<b>汉字词语接龙</b>把发球台汉字连到旗杆汉字的高尔夫。输入以当前汉字<b>开头</b>的日语词语（2~4个汉字），该词的<b>最后一个汉字</b>就是你的新位置。到达旗杆汉字即完成本洞 — 用词数量就是杆数，低于标准杆即为小鸟球、老鹰球！<br>示例（3杆洞）: <b>学</b> → 学校 → 校 → 校長 → 長 → 長所 → <b>所</b> ⛳<br>生僻词（✨）可以穿过「树丛间隙 ▚」— 通向低于标准杆的隐藏捷径。<h3 style="color:var(--ink);letter-spacing:.15em;margin:14px 0 4px;font-size:14px">看懂球道图</h3>绿色带是球道，外围是长草区。蓝色是水塘（球不能停留），带点的沙地是沙坑（出口稀少的汉字）。金色虚线暗示存在隐藏捷径，橙色弧线是「剩余杆数」距离环。<h3 style="color:var(--ink);letter-spacing:.15em;margin:14px 0 4px;font-size:14px">球杆</h3>开局前最多带<b>3支</b>球杆。特殊击球<b>每轮共3次、每洞限1次</b>。点击杆签抽出球杆，再输入符合条件的词语。<br>・<b>一号木</b> — 仅限5杆洞发球台。一杆连打两个词。<br>・<b>三号木</b> — 可从上一个词中的任意汉字起跳。<br>・<b>难读铁杆</b> — 借助罕见音读跳到同音汉字后击球。<br>・<b>挖起杆(高吊)</b> — 打一个以当前汉字<b>结尾</b>的词，回到词首。<br>・<b>地名挖起杆</b> — 可使用地名、车站名。<h3 style="color:var(--ink);letter-spacing:.15em;margin:14px 0 4px;font-size:14px">边玩边学</h3>出现的词语点「＋」即可存入学习笔记（含读音和释义）。学习模式（⚙）提供假名注音、释义和两位球童（职业/常用）。即使放弃本洞，也能从示范路线里收获词汇。</div>
+  </div>
+</div>
+<div id="viewBuild" hidden>
+  <div class="holecard" style="margin-top:14px"><span class="holeno">コース工房 · COURSE BUILDER</span><span class="parbadge" id="bPool"></span></div>
+  <div class="toolrow" style="margin:4px 0 0"><button class="ghost" onclick="goGolf()" style="padding:5px 10px;font-size:11px">← ゴルフへ戻る</button></div>
+  <div style="font-family:ui-sans-serif,system-ui,sans-serif;font-size:12.5px">
+    <div style="display:flex;align-items:center;gap:10px;margin:10px 0 2px">
+      <span style="font-size:10px;color:var(--pencil)">やさしい</span>
+      <input type="range" id="bDiff" min="1" max="100" value="35" style="flex:1">
+      <span style="font-size:10px;color:var(--pencil)">むずかしい</span>
+      <b id="bDiffV" style="color:var(--acc);width:34px;text-align:right">35</b>
+    </div>
+    <div class="sub" id="bPoolLine" style="text-align:left;margin:0 0 8px"></div>
+    <div class="toolrow" style="justify-content:flex-start">
+      <button class="ghost" id="bGen">⚙ 9ホール自動生成</button>
+      <input id="bName" placeholder="コース名" maxlength="14" style="font-family:inherit;font-size:13px;padding:8px 10px;border:1.4px solid var(--ink);border-radius:3px;background:#fff">
+      <button class="ghost" id="bTest">🏌 試打する</button>
+      <button class="btn" id="bPublish">公開する</button>
+      <button class="ghost" id="bSaveLocal">端末に保存</button>
+    </div>
+    <div class="sub" id="bSummary" style="text-align:left;margin:2px 0"></div>
+    <div class="sub" id="bStat" style="text-align:left;min-height:16px"></div>
+    <div id="bHoles" style="margin:8px 0"></div>
+    <div class="toolrow" style="justify-content:flex-start">
+      <button class="ghost" id="bExport">書き出し(JSON)</button>
+      <button class="ghost" id="bImport">読み込み</button>
+    </div>
+    <textarea id="bIO" rows="3" style="width:100%;font-family:ui-monospace,monospace;font-size:11px;border:1.4px solid var(--rule);border-radius:3px;margin-top:6px"></textarea>
+    <h3 style="letter-spacing:.2em;font-size:13px;margin:18px 0 6px;color:var(--turf)">コース一覧の管理</h3>
+    <div id="bManage"></div>
+  </div>
+</div>
+<div id="viewMaker" hidden>
+  <div class="holecard" style="margin-top:14px"><span class="holeno">管理 · DEVELOPER DASHBOARD</span><span class="parbadge" id="devwho"></span></div>
+  <div style="font-family:ui-sans-serif,system-ui,sans-serif;font-size:12.5px">
+    <h3 style="letter-spacing:.2em;font-size:13px;margin:14px 0 6px;color:var(--turf)">① ゲーム設定（本体設定と連動）</h3>
+    <div class="toolrow" id="devToggles" style="justify-content:flex-start"></div>
+    <h3 style="letter-spacing:.2em;font-size:13px;margin:18px 0 6px;color:var(--turf)">② バックエンド（ユーザー名・公開コース）</h3>
+    <div class="toolrow" style="justify-content:flex-start;align-items:center">
+      <input id="devBackend" placeholder="https://….workers.dev（空欄=端末内のみ）" style="flex:1;min-width:220px;font-family:ui-monospace,monospace;font-size:12px;padding:8px 10px;border:1.4px solid var(--ink);border-radius:3px;background:#fff">
+      <button class="ghost" id="devBackendSave">保存</button>
+      <button class="ghost" id="devBackendTest">接続テスト</button>
+      <span id="devBackendStat" style="font-size:11px;color:var(--pencil)"></span>
+    </div>
+    <h3 style="letter-spacing:.2em;font-size:13px;margin:18px 0 6px;color:var(--turf)">③ データ</h3>
+    <div class="toolrow" style="justify-content:flex-start">
+      <button class="ghost" id="devDumpRec">記録を書き出し</button>
+      <button class="ghost" id="devDevOff">開発者モード終了</button>
+    </div>
+    <textarea id="devIO" rows="3" style="width:100%;font-family:ui-monospace,monospace;font-size:11px;border:1.4px solid var(--rule);border-radius:3px;margin-top:6px"></textarea>
+  </div>
+</div>
+<div id="viewNotes" hidden>
+  <div class="holecard" style="margin-top:14px"><span class="holeno">ジム · TRAINING GYM</span><span class="parbadge" id="notecount">0 語</span></div>
+  <div class="notesempty" id="notesempty">まだ空です。<br>学習モード中、出てきた熟語の「＋」でここに貯まります。</div>
+  <div class="zukanbox" id="zukan"></div>
+  <div class="toolrow" id="notetools" hidden style="margin:6px 0">
+    <select id="noteSort" style="font-family:inherit;font-size:12px;padding:6px 8px;border:1.4px solid var(--ink);border-radius:8px;background:#fff">
+      <option value="added">追加が新しい順</option>
+      <option value="first">頭文字順</option>
+      <option value="last">尾文字順</option>
+      <option value="freq">よく使う順</option>
+    </select>
+    <button class="ghost" id="noteFetchAll">例文を一括取得</button>
+    <button class="ghost" id="noteAnki">Anki用にエクスポート</button>
+  </div>
+  <table class="notes" id="notestable" hidden><thead><tr><th style="width:20%">語</th><th style="width:17%">読み</th><th style="width:24%">意味</th><th>例文</th><th style="width:30px"></th></tr></thead><tbody></tbody></table>
+  <div class="sub" id="notesrc" hidden style="font-size:9.5px;margin-top:4px">例文: Tatoeba (CC-BY 2.0 FR) からオンライン取得</div>
+</div>
+</main>
+<footer>常用カントリー倶楽部 v0.9 CASUAL · 辞書 JMDICT/KANJIDIC · 例文 TATOEBA (CC-BY)</footer>
+<script src="data/dict.js"></script>
+<script>
+const W2 = new Set(); for(let i=0;i<DATA.d.w2.length;i+=2) W2.add(DATA.d.w2.slice(i,i+2));
+const WL = new Set(DATA.d.wL);
+const RARE = new Set(DATA.rare);
+const LEX = DATA.lex, RLEX = DATA.rlex, FREQ = DATA.freq, ONYOMI = DATA.onyomi;
+const COURSES = DATA.courses;
+let courseIdx = 0;
+let HOLES = COURSES[0].holes;
+const KANJI_RE = /^[\u4e00-\u9fff]{2,4}$/;
+const ADJW={}, RADJ={}, FADJW={}, FRADJ={};
+function addWord(map, w){ (map[w[0]]=map[w[0]]||[]).push(w); }
+for(let i=0;i<DATA.d.w2.length;i+=2){
+  const w=DATA.d.w2.slice(i,i+2);
+  addWord(ADJW,w); addWord(FADJW,w);
+  (RADJ[w[1]]=RADJ[w[1]]||[]).push(w[0]);
+  (FRADJ[w[1]]=FRADJ[w[1]]||[]).push(w[0]);
+}
+for(const w of DATA.d.wL){ addWord(ADJW,w); addWord(FADJW,w);
+  (FRADJ[w[w.length-1]]=FRADJ[w[w.length-1]]||[]).push(w[0]); }
+for(const w of DATA.rare){ addWord(FADJW,w);
+  (FRADJ[w[w.length-1]]=FRADJ[w[w.length-1]]||[]).push(w[0]); }
+function bfsRev(radj, goal){
+  const d={[goal]:0}, q=[goal];
+  for(let i=0;i<q.length;i++){const u=q[i];
+    for(const v of (radj[u]||[])) if(!(v in d)){ d[v]=d[u]+1; q.push(v); }}
+  return d;
+}
+let h=0, chain=[], pos=null, scores=Array(HOLES.length).fill(null),
+    used=new Set(), dgoal={}, fdgoal={}, progress=0, inRough=false,
+    trail=[], penalty=0;
+const $=id=>document.getElementById(id);
+const hole=()=>HOLES[h];
+const learner=()=>$('optLearner').checked;
+const clubsOn=()=>$('optClubs').checked;
+let AC=null;
+const soundOn=()=>$('optSound').checked;
+/* ---- mp3 layer with synth fallback ---- */
+const AUD={},AUDok={};
+['drive','3wood','iron','putt','cup','ambient'].forEach(function(n){
+  try{const a=new Audio('media/sounds/'+n+'.mp3');
+    a.addEventListener('canplaythrough',function(){AUDok[n]=true;},{once:true});
+    a.preload='auto';AUD[n]=a;}catch(e){}
+});
+function mp3(n,vol){
+  if(!soundOn()||!AUDok[n])return false;
+  try{const a=AUD[n].cloneNode();a.volume=vol||0.8;a.play();return true;}catch(e){return false;}
+}
+let AMB=null;
+function ambient(on){
+  try{
+    if(on&&soundOn()&&AUDok.ambient){
+      if(!AMB){AMB=AUD.ambient.cloneNode();AMB.loop=true;AMB.volume=0.12;}
+      AMB.play();
+    }else if(AMB){AMB.pause();}
+  }catch(e){}
+}
+function ac(){ if(!AC) AC=new (window.AudioContext||window.webkitAudioContext)(); if(AC.state==='suspended')AC.resume(); return AC; }
+function tone(f,t0,dur,type,vol){
+  try{
+  type=type||'sine';vol=vol||.15;
+  const a=ac(),o=a.createOscillator(),g=a.createGain();
+  o.type=type;o.frequency.value=f;o.connect(g);g.connect(a.destination);
+  g.gain.setValueAtTime(vol,a.currentTime+t0);
+  g.gain.exponentialRampToValueAtTime(.001,a.currentTime+t0+dur);
+  o.start(a.currentTime+t0);o.stop(a.currentTime+t0+dur+.05);
+  }catch(e){}
+}
+function noise(t0,dur,vol,hp){
+  try{
+  vol=vol||.25;hp=hp||1200;
+  const a=ac(),n=a.sampleRate*dur,buf=a.createBuffer(1,n,a.sampleRate),d=buf.getChannelData(0);
+  for(let i=0;i<n;i++)d[i]=(Math.random()*2-1)*(1-i/n);
+  const s=a.createBufferSource(),f=a.createBiquadFilter(),g=a.createGain();
+  f.type='highpass';f.frequency.value=hp;g.gain.value=vol;
+  s.buffer=buf;s.connect(f);f.connect(g);g.connect(a.destination);s.start(a.currentTime+t0);
+  }catch(e){}
+}
+const SFX={
+  strike(){if(!soundOn())return;tone(2400,0,.02,'square',.10);noise(0,.05,.22,2200);noise(.02,.16,.12,600);},
+  shank(){if(!soundOn())return;tone(190,0,.09,'sawtooth',.12);tone(163,0,.11,'sawtooth',.10);noise(0,.06,.18,300);},
+  trees(){if(!soundOn())return;for(let i=0;i<5;i++)noise(i*.06,.05,.16,700+Math.random()*1500);tone(120,.3,.15,'triangle',.09);},
+  land(){if(!soundOn())return;tone(300,0,.05,'sine',.07);},
+  roughLand(){if(!soundOn())return;noise(0,.12,.14,250);tone(140,0,.1,'triangle',.08);},
+  cup(){if(!soundOn())return;
+    tone(950,0,.03,'square',.09);tone(720,.09,.03,'square',.08);tone(600,.17,.025,'square',.07);
+    noise(.22,.28,.16,1400);tone(310,.34,.10,'sine',.09);tone(155,.40,.22,'sine',.10);},
+  birdie(){if(!soundOn())return;[523,659,784,1047].forEach(function(f,i){tone(f,.55+i*.09,.22,'triangle',.13)});},
+  eagle(){if(!soundOn())return;[523,659,784,1047,1319].forEach(function(f,i){tone(f,.55+i*.08,.25,'triangle',.14)});},
+  bogey(){if(!soundOn())return;tone(220,0,.25,'sawtooth',.06);tone(196,.12,.3,'sawtooth',.06);},
+  rare(){if(!soundOn())return;for(let i=0;i<6;i++)tone(1200+i*220,i*.045,.18,'sine',.06);},
+  club(){if(!soundOn())return;tone(880,0,.06,'triangle',.1);tone(1174,.07,.1,'triangle',.1);},
+  err(){if(!soundOn())return;tone(160,0,.12,'square',.06);}
+};
+const CLUB_ICONS={
+  wedge:'<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M14 2 L8 18"/><path d="M8 18 q -1 4 4 4 q 5 0 4 -4 q -.6 -2.4 -4 -2 q -3 .4 -4 2"/></svg>',
+  lob:'<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M13 2 L9 17"/><path d="M9 17 q -2 5 4 5 q 6 0 5 -5 Z"/><path d="M4 8 q 4 -5 8 0" stroke-dasharray="2 2"/></svg>',
+  iron:'<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M15 2 L9 17"/><path d="M9 17 L5 22 L14 20 Z"/></svg>',
+  driver:'<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M15 2 L10 15"/><ellipse cx="9" cy="19" rx="6" ry="4"/></svg>',
+  spoon:'<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M15 2 L10 16"/><ellipse cx="9.5" cy="19.5" rx="5" ry="3.2"/></svg>'
+};
+const CLUB_DEFS={
+  driver:{id:'driver',name:'ドライバー',icon:CLUB_ICONS.driver,
+    desc:'パー5のティーのみ。1打で熟語を2つ続けて打つ。',
+    ex:'<span class="exw">学校</span><span class="exop">＋</span><span class="exw">校長</span><span class="exeq">＝1打</span><span class="exn">2語つないで1打。パー5ティー限定</span>'},
+  spoon:{id:'spoon',name:'スプーン',icon:CLUB_ICONS.spoon,
+    desc:'直前の熟語の中のどの字からでも打てる。',
+    ex:'<span class="exw">社<b>交</b>界</span><span class="exop">→</span><span class="exw"><b>交</b>通</span><span class="exn">前の語の中の字から発進</span>'},
+  iron:{id:'iron',name:'難読アイアン',icon:CLUB_ICONS.iron,
+    desc:'珍しい音読みを共有する字へ乗り移って打つ。',
+    ex:'<b>遺</b><span class="exop">⇄</span><b>唯</b><span class="exs">(ユイ)</span><span class="exop">→</span><span class="exw">唯一</span><span class="exn">珍しい同音の字へ乗り移り</span>'},
+  lob:{id:'lob',name:'ロブウェッジ',icon:CLUB_ICONS.lob,
+    desc:'いまの字で「終わる」熟語を打ち、語頭へ戻す。',
+    ex:'いま<b>口</b><span class="exop">→</span><span class="exw">入<b>口</b></span><span class="exop">→</span><b>入</b>へ<span class="exn">語尾で打って語頭に着地</span>'},
+  geo:{id:'geo',name:'地名ウェッジ',icon:CLUB_ICONS.wedge,
+    desc:'地名・駅名（通常辞書に無い語）で打てる。',
+    ex:'<span class="exw">目黒</span><span class="exw">神戸</span><span class="exw">熊本</span><span class="exeq">OK</span><span class="exn">地名・駅名が辞書になる</span>'}
+};
+const GEO=new Set(DATA.clubs.geo);
+const RB=DATA.rarebud||{};
+let myBag=[], bagUses=0, armedId=null, holeClubUsed=false, driverPending=null;
+let centerEl=null;
+/* ---- portrait yardage-book archetypes: original art, tee bottom / green top ---- */
+function gBlob(cx,cy,r){return 'M '+(cx-r)+' '+cy+' C '+(cx-r)+' '+(cy-r*1.15)+', '+(cx+r*.2)+' '+(cy-r*1.25)+', '+(cx+r*.7)+' '+(cy-r*.7)+' C '+(cx+r*1.2)+' '+(cy-r*.15)+', '+(cx+r*.95)+' '+(cy+r*.85)+', '+(cx+r*.1)+' '+(cy+r)+' C '+(cx-r*.7)+' '+(cy+r*1.1)+', '+(cx-r)+' '+(cy+r*.6)+', '+(cx-r)+' '+cy+' Z';}
+const ARCH={
+ bell:{par:[3],water:true,dogleg:false,sandy:false,nick:'鐘の池',side:1,zones:[[.42,.72]],
+  corr:"M 92 396 C 60 330, 62 220, 84 120 C 96 66, 118 30, 138 26 C 176 22, 204 60, 206 130 C 208 220, 198 330, 172 396 Z",
+  fair:"M 112 380 C 96 320, 98 250, 112 190 C 120 158, 140 152, 152 182 C 164 244, 164 320, 150 380 Z",
+  center:"M 131 372 C 126 300, 128 200, 130 78",
+  green:[130,72,30],bunkers:[[92,40,15,8],[172,36,14,8]],
+  waterSVG:'<path d="M 84 156 C 116 138, 176 140, 196 164 C 210 186, 196 218, 162 226 C 122 234, 88 220, 80 194 C 76 178, 74 164, 84 156 Z" class="wtr"/><path d="M 108 180 q 10 -5 20 0 q 10 5 20 0 M 130 206 q 10 -5 20 0" class="wln"/>',
+  trees:[[52,120,13],[210,206,12],[46,260,11],[214,318,12]],
+  cut:"M 106 360 C 60 260, 66 140, 112 84"},
+ island:{par:[3],water:true,dogleg:false,sandy:false,nick:'島グリーン',side:1,zones:[[.5,.92]],
+  corr:"M 92 396 C 62 330, 60 200, 86 100 C 102 44, 160 28, 196 62 C 224 92, 224 200, 208 300 C 198 356, 178 396, 150 396 Z",
+  fair:"M 112 380 C 98 330, 100 280, 112 240 C 120 214, 142 212, 150 238 C 160 282, 158 336, 146 380 Z",
+  center:"M 131 372 C 126 300, 128 210, 130 82",
+  green:[130,80,26],
+  waterSVG:'<path d="M 66 128 C 90 76, 182 66, 210 108 C 232 146, 216 200, 168 212 C 116 224, 66 196, 62 158 C 60 144, 60 136, 66 128 Z" class="wtr"/><path d="M 92 120 q 11 -5 22 0 q 11 5 22 0 M 160 176 q 11 -5 22 0" class="wln"/><path d="M 130 208 L 130 232" stroke="var(--map-ink)" stroke-width="3"/>',
+  trees:[[48,240,12],[212,260,12],[52,330,11]],
+  cut:"M 112 356 C 66 260, 74 150, 112 96"},
+ stamp:{par:[3],water:false,dogleg:false,sandy:true,nick:'切手グリーン',side:1,zones:[],
+  corr:"M 94 396 C 66 320, 68 210, 92 110 C 104 58, 126 32, 142 32 C 176 34, 198 80, 198 150 C 198 240, 190 330, 168 396 Z",
+  fair:"M 112 380 C 100 320, 102 240, 114 176 C 120 148, 142 146, 150 176 C 160 240, 158 320, 148 380 Z",
+  center:"M 131 372 C 126 290, 128 190, 130 88",
+  green:[130,80,20],
+  waterSVG:'',
+  bunkers:[[96,58,13,7],[166,52,13,7],[172,104,12,7],[90,108,12,7],[130,124,11,6]],
+  trees:[[54,180,12],[208,160,12],[50,300,12],[212,300,11]],
+  cut:"M 110 358 C 68 260, 76 150, 110 100"},
+ road:{par:[4],water:false,dogleg:true,sandy:true,nick:'道の四番',side:-1,zones:[],
+  corr:"M 96 396 C 66 330, 62 230, 82 150 C 96 92, 140 48, 196 44 C 236 42, 250 74, 240 100 C 230 126, 196 128, 168 148 C 138 170, 128 240, 130 300 C 132 350, 128 396, 112 396 Z",
+  fair:"M 112 380 C 102 320, 104 250, 118 200 C 130 158, 160 130, 196 118 C 214 112, 222 96, 214 86 C 204 76, 176 84, 152 104 C 118 132, 100 200, 100 270 C 100 320, 104 380, 112 380 Z",
+  center:"M 122 372 C 112 300, 112 210, 142 150 C 162 112, 190 96, 212 92",
+  green:[214,90,22],bunkers:[[186,110,10,7]],
+  waterSVG:'<rect x="150" y="28" width="104" height="15" fill="#DCD8C6" stroke="var(--map-ink)" stroke-width="1"/><text x="192" y="39" font-size="8.5" font-family="sans-serif" fill="var(--map-ink)" letter-spacing="2">道</text>',
+  trees:[[56,180,12],[52,300,12],[92,80,11],[246,180,12]],
+  cut:"M 108 350 C 84 240, 120 130, 196 100"},
+ burn:{par:[4,5],water:true,dogleg:false,sandy:false,nick:'小川越え',side:1,zones:[[.58,.68]],
+  corr:"M 92 396 C 64 330, 64 210, 88 110 C 100 58, 124 32, 142 32 C 178 34, 200 84, 200 156 C 200 244, 192 332, 168 396 Z",
+  fair:"M 112 380 C 100 320, 102 230, 112 166 C 118 130, 142 128, 150 164 C 160 230, 158 322, 148 380 Z",
+  center:"M 131 372 C 126 290, 128 190, 130 82",
+  green:[130,74,24],
+  waterSVG:'<path d="M 62 172 C 100 158, 168 158, 206 172 C 214 176, 214 186, 206 190 C 168 178, 100 178, 62 192 Z" class="wtr"/><path d="M 84 176 q 10 -4 20 0 M 150 172 q 10 -4 20 0" class="wln"/>',
+  trees:[[52,120,12],[210,120,12],[50,280,12],[212,300,12]],
+  cut:"M 110 356 C 70 250, 80 140, 112 90"},
+ cathedral:{par:[4],water:false,dogleg:true,sandy:false,nick:'伽藍の並木',side:1,zones:[],
+  corr:"M 130 396 C 90 360, 66 300, 82 240 C 96 190, 140 180, 158 140 C 172 106, 152 74, 122 66 C 96 58, 92 40, 112 32 C 160 22, 214 60, 212 130 C 210 200, 160 226, 140 280 C 126 320, 156 360, 158 396 Z",
+  fair:"M 138 380 C 112 348, 98 306, 110 262 C 122 218, 158 204, 168 162 C 176 128, 162 100, 138 90 C 154 80, 182 96, 188 130 C 194 180, 154 214, 134 264 C 120 302, 136 348, 146 380 Z",
+  center:"M 142 372 C 112 330, 104 280, 126 236 C 150 190, 180 170, 178 120 C 176 96, 164 84, 150 80",
+  green:[150,76,22],bunkers:[[118,110,10,6]],
+  waterSVG:'',
+  trees:[[56,140,13],[48,220,13],[52,330,12],[216,220,13],[220,310,12],[214,80,12],[80,60,11]],
+  cut:"M 122 350 C 80 260, 110 130, 146 96"},
+ pews:{par:[4,5],water:false,dogleg:false,sandy:true,nick:'教会の椅子',side:1,zones:[],
+  corr:"M 92 396 C 64 320, 66 200, 92 104 C 106 52, 128 30, 144 32 C 178 36, 198 86, 198 158 C 198 246, 188 334, 166 396 Z",
+  fair:"M 112 380 C 100 316, 102 228, 114 166 C 120 132, 144 130, 152 166 C 162 230, 158 320, 148 380 Z",
+  center:"M 131 372 C 126 288, 128 190, 130 84",
+  green:[130,76,22],
+  waterSVG:'',
+  bunkers:[[86,150,13,6],[84,186,13,6],[82,222,13,6],[80,258,13,6],[78,294,13,6],[162,96,10,6]],
+  trees:[[212,150,12],[214,260,12],[50,340,11],[210,350,11]],
+  cut:"M 148 356 C 190 250, 176 140, 148 96"},
+ amen:{par:[5],water:true,dogleg:true,sandy:true,nick:'祈りの五番',side:-1,zones:[[.6,.7]],
+  corr:"M 148 396 C 108 360, 84 300, 92 240 C 100 186, 140 168, 150 122 C 158 84, 136 60, 104 58 C 76 56, 72 36, 94 30 C 148 20, 200 58, 198 128 C 196 196, 152 224, 138 276 C 128 316, 152 360, 156 396 Z",
+  fair:"M 148 380 C 120 348, 106 302, 116 258 C 126 216, 160 198, 168 156 C 174 122, 160 96, 138 88 C 156 78, 182 96, 186 130 C 190 180, 152 210, 138 262 C 128 300, 142 348, 152 380 Z",
+  center:"M 150 372 C 122 330, 112 280, 130 238 C 150 194, 176 172, 176 126 C 176 100, 164 88, 148 84",
+  green:[146,80,23],bunkers:[[110,102,11,6],[184,66,10,6]],
+  waterSVG:'<path d="M 92 152 C 120 140, 168 138, 198 148 C 206 152, 206 162, 198 166 C 168 154, 120 156, 92 170 Z" class="wtr"/><path d="M 74 60 C 76 130, 70 220, 84 300" stroke="var(--map-water)" stroke-width="9" fill="none"/><path d="M 74 60 C 76 130, 70 220, 84 300" stroke="var(--map-ink)" stroke-width="1" fill="none" opacity=".45"/>',
+  trees:[[212,180,12],[216,290,12],[54,340,11],[228,86,11]],
+  cut:"M 132 350 C 92 250, 130 130, 152 100"},
+ coast:{par:[5],water:true,dogleg:false,sandy:true,nick:'岬の五番',side:-1,zones:[],
+  corr:"M 76 396 C 50 320, 52 200, 78 104 C 92 52, 114 30, 130 32 C 164 36, 182 86, 182 158 C 182 246, 172 334, 150 396 Z",
+  fair:"M 96 380 C 84 316, 86 228, 98 166 C 104 132, 128 130, 136 166 C 146 230, 142 320, 132 380 Z",
+  center:"M 115 372 C 110 288, 112 190, 114 84",
+  green:[114,76,22],bunkers:[[80,150,11,6],[86,250,11,6]],
+  waterSVG:'<path d="M 196 20 C 216 100, 210 220, 226 300 C 234 344, 226 396, 226 396 L 260 396 L 260 20 Z" class="wtr"/><path d="M 208 120 q -5 12 0 24 M 216 240 q -5 12 0 24" class="wln"/>',
+  trees:[[44,140,12],[42,260,12],[48,350,11]],
+  cut:"M 96 356 C 58 250, 66 140, 96 96"},
+ valley:{par:[4],water:false,dogleg:false,sandy:true,nick:'罪の谷',side:1,zones:[],
+  corr:"M 84 396 C 56 320, 58 200, 84 104 C 98 52, 126 30, 146 32 C 184 36, 206 86, 206 158 C 206 246, 196 334, 172 396 Z",
+  fair:"M 106 380 C 92 316, 94 224, 108 162 C 116 128, 148 126, 158 162 C 170 228, 166 320, 154 380 Z",
+  center:"M 131 372 C 126 288, 128 190, 130 84",
+  green:[130,74,25],
+  waterSVG:'<path d="M 96 132 q 34 16 70 0 M 100 146 q 30 12 60 0" stroke="var(--map-ink)" stroke-width="1" fill="none" opacity=".38"/>',
+  bunkers:[[92,200,10,5],[172,260,10,5]],
+  trees:[[50,160,12],[214,140,12],[52,300,12],[212,320,11]],
+  cut:"M 150 356 C 196 250, 184 140, 150 96"}
+};
+function matchArch(H){
+  let best=null,bs=-9;
+  for(const k in ARCH){const A=ARCH[k];
+    if(A.par.indexOf(H.par)<0)continue;
+    let sc=0;
+    sc+=(A.water===!!H.water)?2:-2;
+    sc+=(A.dogleg===!!H.dogleg)?2:0;
+    sc+=(A.sandy===(H.bunkers>=3))?1:0;
+    if(k==='island'&&H.water&&H.goal_indeg!==undefined&&H.goal_indeg<=9)sc+=3;
+    sc+=((H.start.charCodeAt(0)+k.length)%3)*.1;
+    if(sc>bs){bs=sc;best=A;}
+  }
+  return best||ARCH.valley;
+}
+let curArch=null;
+/* ---------- image-based hole maps (drop files in /maps, auto-detected) ---------- */
+const IMGOK=new Set();
+function MAPIMG(H){const n=((H.hole-1)%9)+1;return IMGOK.has(n)?'maps/'+n+'.jpg':null;}
+function probeHoleImages(){
+  let done=0;
+  for(let n=1;n<=9;n++)(function(n){
+    const im=new Image();
+    im.onload=function(){IMGOK.add(n);if(++done===9)imgsReady();};
+    im.onerror=function(){if(++done===9)imgsReady();};
+    im.src='maps/'+n+'.jpg';
+  })(n);
+}
+function imgsReady(){
+  if(!$('preround').hidden)renderPreround();
+  if(!$('game').hidden&&typeof h!=='undefined'&&scores)render();
+}
+probeHoleImages();
+/* anchors in image-normalized coords (u,v): tee, green, and a mid control following the fairway */
+const IMGMETA={
+  1:{w:624,h:1683,tee:[.41,.88],mid:[.55,.50],green:[.74,.11]},
+  2:{w:589,h:1695,tee:[.20,.88],mid:[.51,.50],green:[.33,.13]},
+  3:{w:519,h:1684,tee:[.39,.85],mid:[.42,.55],green:[.49,.16]},
+  4:{w:434,h:1676,tee:[.34,.80],mid:[.52,.45],green:[.56,.085]},
+  5:{w:318,h:1666,tee:[.52,.87],mid:[.52,.50],green:[.50,.07]},
+  6:{w:353,h:1657,tee:[.40,.92],mid:[.46,.50],green:[.45,.075]},
+  7:{w:598,h:1625,tee:[.43,.88],mid:[.56,.55],green:[.39,.11]},
+  8:{w:639,h:1697,tee:[.65,.92],mid:[.34,.55],green:[.77,.10]},
+  9:{w:523,h:1647,tee:[.27,.89],mid:[.42,.58],green:[.57,.18]}
+};
+function imgFrame(n){
+  const M=IMGMETA[n], s=Math.min(260/M.w, 400/M.h);
+  const dw=M.w*s, dh=M.h*s, ox=(260-dw)/2, oy=(400-dh)/2;
+  const P=function(uv){return [ox+uv[0]*dw, oy+uv[1]*dh];};
+  return {tee:P(M.tee), mid:P(M.mid), green:P(M.green)};
+}
+const IMGARCH={zones:[],side:1,green:[130,58,26],nick:'',bunkers:[],trees:[]};
+function drawMap(H){
+  const iu=MAPIMG(H);
+  {
+    const n=((H.hole-1)%9)+1, F=imgFrame(n);
+    const gx=F.green[0],gy=F.green[1],tx=F.tee[0],ty=F.tee[1];
+    curArch=Object.assign({},IMGARCH,{green:[gx,gy,26]});
+    const CL='M '+tx+' '+ty+' Q '+F.mid[0]+' '+F.mid[1]+' '+gx+' '+gy;
+    const CUT='M '+(tx-10)+' '+ty+' Q '+(F.mid[0]-16)+' '+(F.mid[1]-6)+' '+(gx-9)+' '+(gy+7);
+    let s='<rect width="260" height="400" fill="#FFFFFF"/>';
+    if(iu)s+='<image href="'+iu+'" x="0" y="0" width="260" height="400" preserveAspectRatio="xMidYMid meet"/>';
+    const RB0=Math.min(Math.hypot(gx-tx,gy-ty),300);
+    for(let k=1;k<H.par;k++){
+      const r=16+(k/H.par)*RB0*0.42;
+      s+='<circle cx="'+gx+'" cy="'+gy+'" r="'+r+'" fill="none" stroke="var(--acc)" stroke-width="1.1" stroke-dasharray="3 6" opacity=".7"/>'
+       +'<text x="'+(gx+r*.72)+'" y="'+(gy+r*.72)+'" font-size="9.5" font-family="sans-serif" font-weight="800" fill="var(--acc)" stroke="#FFF" stroke-width="2.8" paint-order="stroke">'+k+'語</text>';
+    }
+    if(H.secret_cut)s+='<path d="'+CUT+'" stroke="var(--gold)" stroke-width="1.5" stroke-dasharray="1.5 6" fill="none" opacity=".9"/>';
+    s+='<path id="centerline" d="'+CL+'" stroke="#4A4B44" stroke-width="1" stroke-dasharray="4 5" fill="none" opacity=".5"/><g id="trail"></g>';
+    s+='<circle cx="'+gx+'" cy="'+gy+'" r="10" fill="#FFF" stroke="var(--shu)" stroke-width="1.6"/>'
+     +'<text x="'+gx+'" y="'+(gy+5)+'" text-anchor="middle" font-size="13" font-weight="700" style="font-family:inherit" fill="var(--shu)">'+H.goal+'</text>';
+    s+='<rect x="'+(tx-18)+'" y="'+(ty-4)+'" width="36" height="26" rx="3" fill="#FFF" stroke="var(--map-ink)" stroke-width="1.4"/>'
+     +'<text x="'+tx+'" y="'+(ty+14)+'" text-anchor="middle" font-size="15" font-weight="700" style="font-family:inherit" fill="var(--ink)">'+H.start+'</text>';
+    s+='<circle id="ball" r="4" fill="#FFF" stroke="var(--map-ink)" stroke-width="1.4"/>';
+    s+='<text x="252" y="344" text-anchor="end" font-size="9.5" font-family="sans-serif" font-weight="700" letter-spacing="3" fill="var(--ink-soft)" stroke="#FFF" stroke-width="3" paint-order="stroke">HOLE</text>'
+     +'<text x="252" y="382" text-anchor="end" font-size="40" font-family="sans-serif" font-weight="800" fill="var(--acc)" stroke="#FFF" stroke-width="4" paint-order="stroke">'+H.hole+'</text>'
+     +'<text x="252" y="395" text-anchor="end" font-size="9.5" font-family="sans-serif" font-weight="700" letter-spacing="1.5" fill="var(--ink-soft)" stroke="#FFF" stroke-width="3" paint-order="stroke">PAR '+H.par+'（'+H.par+'語）</text>'
+     +(H.secret_cut?'<text x="10" y="392" font-size="10" font-family="sans-serif" fill="var(--gold)" stroke="#FFF" stroke-width="2.5" paint-order="stroke">▚ 藪の切れ目</text>':'');
+    $('holemap').innerHTML=s;
+    centerEl=document.getElementById('centerline');
+    placeBall(0,false); redrawTrail();
+    return;
+  }
+}
+function snapLie(v){
+  if(!curArch)return v;
+  for(const z of curArch.zones){
+    if(v>z[0]&&v<z[1]) return (v-z[0]<z[1]-v)?Math.max(z[0]-.02,0):Math.min(z[1]+.02,1);
+  }
+  return v;
+}
+const visCurve=function(p){return 1-Math.pow(1-p,1.6);};
+function ballXY(v,rough){
+  const L=centerEl.getTotalLength(),l=L*Math.min(v,1);
+  const pt=centerEl.getPointAtLength(l);
+  if(!rough)return[pt.x,pt.y];
+  const p2=centerEl.getPointAtLength(Math.min(l+2,L));
+  const dx=p2.x-pt.x,dy=p2.y-pt.y,m=Math.hypot(dx,dy)||1;
+  const sd=(curArch&&curArch.side)||1;
+  return[pt.x-dy/m*16*sd,pt.y+dx/m*16*sd];
+}
+function placeBall(v,rough){
+  const b=document.getElementById('ball');if(!b)return;
+  const p=ballXY(snapLie(v),rough);b.setAttribute('cx',p[0]);b.setAttribute('cy',p[1]);
+  b.setAttribute('stroke',rough?'#8A6D3B':'var(--map-ink)');
+}
+function redrawTrail(){
+  const g=document.getElementById('trail');if(!g)return;
+  let s='',prev=ballXY(0,false);
+  for(const t of trail){
+    const p=ballXY(snapLie(visCurve(t.v)),t.rough);
+    s+='<line x1="'+prev[0]+'" y1="'+prev[1]+'" x2="'+p[0]+'" y2="'+p[1]+'" stroke="var(--pencil)" stroke-width="1.1" stroke-dasharray="2 3" opacity=".8"/>';
+    s+='<path d="M '+(p[0]-3)+' '+(p[1]-3)+' l 6 6 M '+(p[0]+3)+' '+(p[1]-3)+' l -6 6" stroke="var(--pencil)" stroke-width="1.2" opacity=".9"/>';
+    prev=p;
+  }
+  g.innerHTML=s;
+}
+function animateBall(v0,v1,opts,done){
+  opts=opts||{};
+  const b=document.getElementById('ball'),t0=performance.now(),dur=650;
+  if(matchMedia('(prefers-reduced-motion: reduce)').matches||!document.getElementById('optAnim').checked){placeBall(v1,opts.rough);redrawTrail();if(done)done();return;}
+  function frame(t){
+    const k=Math.min((t-t0)/dur,1),e=k<.5?2*k*k:1-Math.pow(-2*k+2,2)/2;
+    const v=v0+(v1-v0)*e;
+    const mix=(opts.fromRough?1-e:0)+(opts.rough?e:0);
+    const l=ballXY(v,false),r=ballXY(v,true);
+    const x=l[0]+(r[0]-l[0])*mix,y=l[1]+(r[1]-l[1])*mix;
+    const hop=Math.sin(k*Math.PI)*10*(v1-v0>.15?1:.35);
+    b.setAttribute('cx',x);b.setAttribute('cy',y-hop);
+    if(k<1)requestAnimationFrame(frame);
+    else{placeBall(v1,opts.rough);redrawTrail();opts.rough?SFX.roughLand():SFX.land();if(done)done();}
+  }
+  requestAnimationFrame(frame);
+}
+function clubFor(delta,holed,wlen){
+  if(holed&&delta===1&&wlen===2)return'パター';
+  if(delta>=3||wlen===4)return'ドライバー';
+  if(delta===2||wlen===3)return'ウッド';
+  return'アイアン';
+}
+function lexOf(w){return LEX[w]||RLEX[w]||null;}
+function routeGlossHTML(words){
+  return words.map(function(w){const lx=lexOf(w);
+    return lx?w+'（'+lx[0]+(lx[1]?'・'+lx[1]:'')+'）':w;}).join(' → ');
+}
+let NOTES={};
+try{NOTES=JSON.parse(localStorage.getItem('kanjigolf_notes')||'{}');}catch(e){NOTES={};}
+function saveNotes(){try{localStorage.setItem('kanjigolf_notes',JSON.stringify(NOTES));}catch(e){}}
+let PLAYED={};try{PLAYED=JSON.parse(localStorage.getItem('kg_played')||'{}');}catch(e){}
+function collectWord(w,src2){
+  if(NOTES[w]||PLAYED[w])return;
+  PLAYED[w]={t:Date.now(),s:src2};
+  try{localStorage.setItem('kg_played',JSON.stringify(PLAYED));}catch(e){}
+}
+function addNote(w){
+  if(NOTES[w])return;
+  const lx=lexOf(w);
+  NOTES[w]=[lx?lx[0]:'',lx?lx[1]:'',Date.now(),null,null];
+  saveNotes();renderNotes();if(typeof render==='function'&&!$('game').hidden)render();
+  fetchSentence(w).then(function(s){
+    if(s&&NOTES[w]){NOTES[w][3]=s.jp;NOTES[w][4]=s.en;saveNotes();if(!$('viewNotes').hidden)renderNotes();}
+  });
+}
+async function fetchSentence(w){
+  try{
+    const r=await fetch('https://api.tatoeba.org/unstable/sentences?lang=jpn&q="'+encodeURIComponent(w)+'"&sort=relevance&limit=6',{signal:AbortSignal.timeout(6000)});
+    const j=await r.json();
+    const arr=(j&&(j.data||j.results||j.sentences))||[];
+    for(const it of arr){
+      const jp=it.text||it.sentence||'';
+      if(!jp||jp.indexOf(w)<0||jp.length>60)continue;
+      let en='';
+      const tr=it.translations||[];
+      const flat=Array.isArray(tr[0])?[].concat.apply([],tr):tr;
+      for(const t of flat){if(t&&(t.lang==='eng'||t.language==='eng')&&t.text){en=t.text;break;}}
+      return {jp:jp,en:en};
+    }
+  }catch(e){}
+  return null;
+}
+function delNote(w){delete NOTES[w];saveNotes();renderNotes();render();}
+window.delNote=delNote;
+function noteSortKeys(){
+  const keys=Object.keys(NOTES), m=($('noteSort')&&$('noteSort').value)||'added';
+  if(m==='added')return keys.sort(function(a,b){return (NOTES[b][2]||0)-(NOTES[a][2]||0);});
+  if(m==='first')return keys.sort(function(a,b){return a[0].localeCompare(b[0],'ja')||a.localeCompare(b,'ja');});
+  if(m==='last')return keys.sort(function(a,b){return a[a.length-1].localeCompare(b[b.length-1],'ja')||a.localeCompare(b,'ja');});
+  return keys.sort(function(a,b){return (DATA.freq[a]||99)-(DATA.freq[b]||99);});
+}
+function renderZukan(){
+  const el=$('zukan');if(!el)return;
+  const keys=Object.keys(PLAYED).sort(function(a,b){return PLAYED[b].t-PLAYED[a].t;});
+  el.innerHTML='<div class="lbtitle" style="margin-bottom:2px">ことば図鑑 — 自力で打った語 <b style="color:var(--acc)">'+keys.length+'</b></div>'
+    +(keys.length?'<div class="zchips">'+keys.slice(0,80).map(function(w){
+        return '<span class="zchip">'+w+(NOTES[w]?'':'<button class="notemini zadd" data-w="'+w+'" title="ノートへ">＋</button>')+'</span>';
+      }).join('')+(keys.length>80?'<span class="sub" style="margin:0">…他'+(keys.length-80)+'語</span>':'')+'</div>'
+     :'<div class="sub" style="margin:2px 0">コースやレンジで、自分の力で熟語を打つとここに集まります（ノート由来の語は入りません）</div>');
+  el.querySelectorAll('.zadd').forEach(function(b){b.onclick=function(){addNote(b.dataset.w);renderZukan();};});
+}
+function renderNotes(){
+  renderZukan();
+  const keys=noteSortKeys();
+  $('notebadge').textContent=keys.length?'('+keys.length+')':'';
+  $('notecount').textContent=keys.length+' 語';
+  $('notesempty').hidden=!!keys.length;
+  $('notestable').hidden=!keys.length;
+  $('notetools').hidden=!keys.length;
+  $('notesrc').hidden=!keys.length;
+  $('notestable').querySelector('tbody').innerHTML=keys.map(function(w){
+    const n=NOTES[w];
+    const sent=n[3]?('<span class="sjp">'+n[3]+'</span>'+(n[4]?'<br><span class="sen">'+n[4]+'</span>':''))
+      :'<span style="color:#a8a595">—（オンラインで取得）</span>';
+    return '<tr><td class="w">'+w+'</td><td>'+(n[0]||'')+'</td><td>'+(n[1]||'<span style="color:#a8a595">—</span>')+'</td>'
+    +'<td>'+sent+'</td>'
+    +'<td style="text-align:center"><button class="notemini" onclick="delNote(\''+w+'\')">✕</button></td></tr>';}).join('');
+}
+function candidates(map){return (map[pos]||[]).filter(function(w){return !used.has(w);});}
+function proShot(){
+  let best=null,bd=1e9,bf=1e9,bc=-1;
+  for(const w of candidates(FADJW)){
+    const nx=w[w.length-1];
+    const d=nx===hole().goal?0:(fdgoal[nx]!==undefined?fdgoal[nx]:1e8);
+    const common=(w.length===2?W2.has(w):WL.has(w))?1:0;
+    const f=FREQ[w]||99;
+    if(d<bd||(d===bd&&common>bc)||(d===bd&&common===bc&&f<bf)){best=w;bd=d;bf=f;bc=common;}
+  }
+  return best;
+}
+function commonShot(){
+  const cur=pos===hole().goal?0:(dgoal[pos]!==undefined?dgoal[pos]:1e8);
+  let best=null,bf=1e9,any=null,af=1e9;
+  for(const w of candidates(ADJW)){
+    const nx=w[w.length-1];
+    const d=nx===hole().goal?0:(dgoal[nx]!==undefined?dgoal[nx]:1e8);
+    const f=FREQ[w]||99;
+    if(f<af){any=w;af=f;}
+    if(d<cur&&f<bf){best=w;bf=f;}
+  }
+  return best||any;
+}
+function updateCaddie(){
+  if(pos===hole().goal){$('caddie').textContent='';return;}
+  const fd=fdgoal[pos],cd=dgoal[pos];
+  if(fd===undefined){$('caddie').textContent='残り — 未知の領域';return;}
+  $('caddie').textContent='残り '+fd+' 打圏'+(cd!==undefined&&fd<cd?' ▚':'');
+}
+function clubTagHTML(){
+  return myBag.length?'<span class="clubtag">バッグ '+myBag.length+'本・残り'+bagUses+'回</span>':'';
+}
+function render(){
+  $('holelabel').innerHTML='HOLE '+(h+1)+' / 9'+(holeName()?'「'+holeName()+'」':'')+' &nbsp; '+clubTagHTML();
+  $('holepar').textContent=hole().par;
+  $('teek').textContent=hole().start;
+  $('pink').textContent=hole().goal;
+  const cr=$('clubrow');
+  if(myBag.length&&scores[h]===null){
+    let chtml='';
+    for(const id of myBag){const c=CLUB_DEFS[id];
+      const drvLocked=id==='driver'&&(hole().par!==5||chain.length>0);
+      const dead=!bagUses||holeClubUsed||drvLocked;
+      chtml+='<div class="bag'+(armedId===id?' armed':'')+(dead?' spent':'')+'" data-club="'+id+'" title="'+c.desc+'">'
+        +'<span class="stick">'+c.icon+'</span><span>'+c.name+'</span></div>';}
+    chtml+='<span style="font-family:ui-sans-serif,system-ui,sans-serif;font-size:10.5px;color:var(--pencil);align-self:center">残り'+bagUses+'回'+(holeClubUsed?'・使用済':'')+'</span>';
+    cr.innerHTML=chtml;
+    cr.querySelectorAll('.bag').forEach(function(el){
+      el.addEventListener('click',function(){
+        const id=el.dataset.club;
+        if(!bagUses){msg('特殊ショットの残り回数がありません');SFX.err();return;}
+        if(holeClubUsed){msg('特殊ショットは1ホール1回まで');SFX.err();return;}
+        if(id==='driver'&&hole().par!==5){msg('ドライバーはパー5のティー専用');SFX.err();return;}
+        if(id==='driver'&&chain.length>0){msg('ドライバーはティーショットのみ');SFX.err();return;}
+        armedId=(armedId===id)?null:id;driverPending=null;
+        SFX.club();render();$('wordin').focus();
+      });
+    });
+  } else cr.innerHTML='';
+  if(driverPending)$('wordin').placeholder=driverPending.lie+'…（2語目）';
+  else if(armedId==='lob')$('wordin').placeholder='「〜'+pos+'」で終わる熟語…';
+  else if(armedId==='iron')$('wordin').placeholder='「'+pos+'」と難読同音の字から…';
+  else if(armedId==='geo')$('wordin').placeholder=pos+'…（地名・駅名OK）';
+  else if(armedId==='spoon')$('wordin').placeholder='前の熟語のどの字からでも…';
+  else if(armedId==='driver')$('wordin').placeholder=pos+'…（1語目）';
+  else $('wordin').placeholder=pos+'…';
+  // HUD
+  $('hudTee').textContent=hole().start;
+  $('hudLie').textContent=pos;
+  $('hudPin').textContent=hole().goal;
+  $('hudScore').textContent=(chain.length+penalty)+'打'+(penalty?'（+'+penalty+'）':'')+' / PAR '+hole().par;
+  $('hudChain').innerHTML=chain.length?chain.map(function(m){return m.w;}).join('<b> → </b>'):'<span style="color:var(--pencil)">まだ打っていません</span>';
+  const c=$('chain');c.innerHTML='';
+  chain.forEach(function(m,i){
+    if(i>0){const a=document.createElement('span');a.className='parr';a.textContent='→';c.appendChild(a);}
+    const w=m.w, lieIdx=m.spin?0:w.length-1;
+    const holed=m.lie===hole().goal&&i===chain.length-1&&scores[h]!==null;
+    const lx=lexOf(w);
+    const pill=document.createElement('span');
+    pill.className='pill'+(i===chain.length-1?' pilllast':'');
+    const body=w.split('').map(function(ch,j){return j===lieIdx?'<span class="'+(holed?'holed':'lie')+'">'+ch+'</span>':ch;}).join('');
+    const marks=(m.rare?'<span class="pmark">✨</span>':'')+(m.club?'<span class="pmark" style="color:var(--gold)" title="'+m.club+'">◈</span>':'');
+    const noteBtn=NOTES[w]?'<span class="noted" title="ノート済">✎</span>':'<button class="notemini notebtn" data-w="'+w+'" title="ノートへ">＋</button>';
+    const furi=learner()&&lx?'<span class="pfuri">'+lx[0]+'</span>':'';
+    pill.innerHTML='<span class="pno">'+(i+1)+'</span>'+furi+'<span class="pword">'+body+'</span>'+marks+noteBtn;
+    if(learner()&&lx&&lx[1])pill.title=lx[1];
+    c.appendChild(pill);
+  });
+  if(!chain.length)c.innerHTML='<span class="sub" style="margin:4px 0;font-size:11px">まだ打っていません — 最初の一打をどうぞ</span>';
+  c.scrollTop=c.scrollHeight;
+  document.querySelectorAll('.notebtn').forEach(function(b){b.onclick=function(){addNote(b.dataset.w);};});
+  const _ash=!isDev()||scores[h]!==null;
+  $('assistrow').hidden=_ash;
+  $('probtn').style.display=_ash?'none':'';
+  $('commonbtn').style.display=_ash?'none':'';
+  updateCaddie();renderCard();renderNotes();
+}
+function renderCard(){
+  const hs=$('cardholes'),ps=$('cardpars'),ss=$('cardscores');
+  hs.innerHTML='<th>HOLE</th>';ps.innerHTML='<th>PAR</th>';ss.innerHTML='<th>SCORE</th>';
+  HOLES.forEach(function(H,i){
+    hs.innerHTML+='<th>'+(i+1)+'</th>';ps.innerHTML+='<td>'+H.par+'</td>';
+    let cell='';
+    if(scores[i]!==null){
+      const d=scores[i]-H.par;
+      const cls=d<=-2?'eagle':d===-1?'birdie':d===1?'bogey':d>=2?'dbogey':'';
+      cell=cls?'<span class="scmark '+cls+'">'+scores[i]+'</span>':scores[i];
+    }
+    ss.innerHTML+='<td class="'+(i===h&&scores[i]===null?'now':'')+'">'+cell+'</td>';
+  });
+  hs.innerHTML+='<th>計</th>';
+  ps.innerHTML+='<td>'+HOLES.reduce(function(a,b){return a+b.par;},0)+'</td>';
+  ss.innerHTML+='<td>'+(scores.some(function(s){return s!==null;})?scores.reduce(function(a,b){return a+(b||0);},0):'')+'</td>';
+}
+function msg(t,ok){const m=$('msg');m.textContent=t;m.className='msg'+(ok?' ok':'');}
+function scoreName(diff,par,s){
+  if(s===1)return'ホールインワン！';
+  if(diff<=-3)return'アルバトロス！';if(diff===-2)return'イーグル！';
+  if(diff===-1)return'バーディー！';if(diff===0)return'パー';
+  if(diff===1)return'ボギー';if(diff===2)return'ダブルボギー';return'+'+diff;
+}
+function inAnyDict(w){return (w.length===2?W2.has(w):WL.has(w))||RARE.has(w);}
+function onyomiShare(a,b){
+  const A=ONYOMI[a]||[],B=ONYOMI[b]||[];
+  for(const r of A)if(B.indexOf(r)>-1)return r;
+  return null;
+}
+function swing(){
+  const w=$('wordin').value.trim();
+  if(!w)return;
+  if(!KANJI_RE.test(w)){msg('漢字2〜4字の熟語を入力してください');SFX.err();return;}
+  if(used.has(w)){msg('その熟語は使用済みです');SFX.err();return;}
+  let clubShot=null, spin=false, pivot=null;
+  const startsHere=w[0]===pos, endsHere=w[w.length-1]===pos;
+  if(driverPending){
+    if(w[0]!==driverPending.lie||!inAnyDict(w)){msg('「'+driverPending.lie+'」から始まる熟語で2語目を');SFX.err();return;}
+    clubShot='driver';
+  }else if(armedId==='driver'){
+    if(!startsHere||!inAnyDict(w)){msg('「'+pos+'」から始まる熟語で1語目を');SFX.err();return;}
+    driverPending={w1:w,lie:w[w.length-1]};
+    msg('ナイスショット！続けて2語目を（同じ1打）',true);
+    $('wordin').value='';render();return;
+  }else if(armedId==='geo'){
+    if(startsHere&&GEO.has(w)&&!inAnyDict(w)){clubShot='geo';}
+    else if(startsHere&&inAnyDict(w)){armedId=null;msg('通常の辞書語なのでクラブは温存しました',true);}
+    else{msg(startsHere?'「'+w+'」は地名辞典にもありません':'「'+pos+'」から始まる地名を');SFX.err();return;}
+  }else if(armedId==='lob'){
+    if(endsHere&&!startsHere&&inAnyDict(w)){clubShot='lob';spin=true;}
+    else{msg('ロブ中：「〜'+pos+'」で終わる熟語を');SFX.err();return;}
+  }else if(armedId==='iron'){
+    if(!startsHere&&inAnyDict(w)&&(RB[pos]||'').indexOf(w[0])>-1){clubShot='iron';pivot=w[0];}
+    else{msg('難読アイアン中：「'+pos+'」と珍しい音読みを共有する字から（'+((RB[pos]||'').split('').join('・')||'該当なし')+'）');SFX.err();return;}
+  }else if(armedId==='spoon'){
+    const prev=chain.length?chain[chain.length-1].w.replace('・',''):'';
+    if(prev&&prev.indexOf(w[0])>-1&&w[0]!==pos&&inAnyDict(w)){clubShot='spoon';}
+    else if(startsHere&&inAnyDict(w)){armedId=null;msg('通常の一打として打ちました（クラブ温存）',true);}
+    else{msg(prev?'スプーン中：「'+prev+'」の中の字から始まる熟語を':'スプーンは2打目以降に');SFX.err();return;}
+  }else{
+    if(!startsHere){msg('「'+pos+'」から始まる熟語を');SFX.err();return;}
+    if(!inAnyDict(w)){msg('「'+w+'」は辞書にありません');SFX.err();return;}
+  }
+  const isDriverFinish=clubShot==='driver'&&driverPending;
+  if(clubShot){armedId=null;}
+  const isRare=!clubShot&&!(w.length===2?W2.has(w):WL.has(w));
+  const prevFD=pos===hole().goal?0:(fdgoal[pos]!==undefined?fdgoal[pos]:hole().par);
+  const wasRough=inRough;
+  const newLie=spin?w[0]:w[w.length-1];
+  used.add(w);
+  const displayW=isDriverFinish?driverPending.w1+'・'+w:w;
+  if(isDriverFinish)used.add(driverPending.w1);
+  driverPending=null;
+  pos=newLie;
+  const holed=pos===hole().goal;
+  const newFD=holed?0:(fdgoal[pos]!==undefined?fdgoal[pos]:Math.max(prevFD-1,0));
+  const gained=prevFD-newFD;
+  const onPace=chain.length+1+penalty+newFD<=hole().par;
+  const treeShot=!holed&&gained<=0;
+  inRough=!holed&&!onPace;
+  collectWord(w,'golf');
+  chain.push({w:displayW,lie:pos,spin:spin,rare:isRare,club:clubShot?CLUB_DEFS[clubShot].name:null,
+    golfclub:clubShot?CLUB_DEFS[clubShot].name:clubFor(Math.max(gained,1),holed,w.length)});
+  if(clubShot){bagUses--;holeClubUsed=true;}
+  if(holed||(gained>0&&onPace))mp3('iron',0.7)||SFX.strike();
+  else if(treeShot)SFX.trees();
+  else SFX.shank();
+  if(clubShot==='geo'){msg('地名ウェッジ！「'+w+'」（残り'+bagUses+'回）',true);SFX.club();}
+  else if(clubShot==='lob'){msg('ロブで戻した！「'+w+'」— 語頭「'+w[0]+'」へ（残り'+bagUses+'回）',true);SFX.club();}
+  else if(clubShot==='iron'){msg('難読同音「'+pivot+'」へ乗り移り！（残り'+bagUses+'回）',true);SFX.club();}
+  else if(clubShot==='spoon'){msg('スプーンで芯から！「'+w+'」（残り'+bagUses+'回）',true);mp3('3wood')||SFX.club();}
+  else if(clubShot==='driver'){msg('ドライバー一閃！2語で1打（残り'+bagUses+'回）',true);mp3('drive')||SFX.club();}
+  else if(isRare){msg('✨ 渋い一打！「'+w+'」— 藪を抜けた',true);SFX.rare();}
+  else if(treeShot){msg(gained<0?'林の中へ…ピンから遠ざかった（残り '+newFD+' 打圏）':'林に当たった…距離が縮まっていない（残り '+newFD+' 打圏）');}
+  else if(inRough&&!wasRough){msg('ラフに入った…パーのラインから外れています');}
+  else msg('','');
+  $('wordin').value='';
+  const newP=holed?1:Math.max(progress,(hole().par-Math.min(newFD,hole().par))/hole().par);
+  render();
+  const seg={v:newP,rough:inRough||treeShot};
+  animateBall(visCurve(progress),visCurve(newP),{rough:seg.rough,fromRough:wasRough},
+    function(){trail.push(seg);redrawTrail();
+      if(holed){mp3(holedSound(hole().par,chain.length),0.9)||SFX.cup();setTimeout(function(){holeOut(null);},380);}});
+  progress=newP;
+}
+function routeNotesHTML(words){
+  let html='',allBtn='';
+  html=words.map(function(w){const lx=lexOf(w);
+    const btn=NOTES[w]?'<span class="noted">✎</span>':'<button class="notemini rnote" data-w="'+w+'">＋</button>';
+    return w+'（'+(lx?lx[0]:'')+(lx&&lx[1]?'・'+lx[1]:'')+'）'+btn;}).join(' → ');
+  allBtn='<div class="toolrow" style="margin-top:6px"><button class="ghost rnoteall">全部ノートへ</button></div>';
+  return html+allBtn;
+}
+let lastMode=null;
+function bindRouteNotes(){
+  document.querySelectorAll('.rnote').forEach(function(b){b.onclick=function(){addNote(b.dataset.w);renderResult();};});
+  const a=document.querySelector('.rnoteall');
+  if(a)a.onclick=function(){hole().sample_path.forEach(addNote);renderResult();};
+}
+function renderResult(){
+  if(!lastMode)return;
+  const par=hole().par,s=scores[h],diff=s-par,t=$('resulttxt');
+  const rw=chain.filter(function(m){return m.rare;}).map(function(m){return m.w;});
+  const cutFound=lastMode==='holed'&&diff<0&&rw.length>0;
+  if(lastMode==='giveup')
+    t.innerHTML='ギブアップ<b class="over">'+s+'打</b><span class="routegloss">模範ルート: '+routeNotesHTML(hole().sample_path)+'</span>'
+      +'<div class="toolrow" style="margin-top:8px"><button class="ghost" onclick="window.resumeHole()">見たので戻って打つ（+1打）</button></div>';
+  else if(lastMode==='pickup')
+    t.innerHTML='ピックアップ<b class="over">+'+diff+' ('+s+'打)</b><span class="routegloss">模範ルート: '+routeNotesHTML(hole().sample_path)+'</span>';
+  else t.innerHTML=(diff<=-2?caddy('eagle'):diff===-1?caddy('birdie'):diff===0?caddy('par'):'')+s+'打<b class="'+(diff<0?'under':diff>0?'over':'')+'">'+scoreName(diff,par,s)+'</b>'+
+       (cutFound?'<span style="font-size:13px;font-family:sans-serif;display:block;margin-top:6px;color:var(--gold)">▚ 隠しカット発見 — '+rw.join('、')+' ▞</span>':'');
+  bindRouteNotes();
+}
+function holeOut(mode){
+  const giveup=mode==='giveup',pickup=mode==='pickup';
+  const par=hole().par,s=giveup?Math.max(par+3,chain.length+penalty+1):pickup?chain.length+penalty+1:chain.length+penalty;
+  scores[h]=s;inRough=false;armedId=null;driverPending=null;lastMode=giveup?'giveup':pickup?'pickup':'holed';
+  recHoleScore(courseKey(),h+1,s);
+  chain.forEach(function(m){ROUNDLOG.mine[m.w]=1;});
+  if((lastMode==='giveup'||lastMode==='pickup')&&hole().sample_path)hole().sample_path.forEach(function(w){ROUNDLOG.model[w]=1;});
+  render();
+  $('playzone').hidden=true;$('resultzone').hidden=false;
+  const diff=s-par;
+  if(!giveup&&!pickup){if(diff<=-2)SFX.eagle();else if(diff===-1)SFX.birdie();else if(diff>0)SFX.bogey();}
+  renderResult();
+  $('nexthole').textContent=h<HOLES.length-1?'次のホールへ ▸':'スコア提出 ⛳';
+}
+/* ---------- client-side course randomizer ---------- */
+const ADJ2={}, OUTDEG={};
+for(let i=0;i<DATA.d.w2.length;i+=2){const a=DATA.d.w2[i],b=DATA.d.w2[i+1];
+  (ADJ2[a]=ADJ2[a]||[]).push(b); OUTDEG[a]=(OUTDEG[a]||0)+1;}
+const ACES=new Set(DATA.d.wL.map(function(w){return w[0]+w[w.length-1];}));
+function bfsFwd(s){const d={};d[s]=0;const q=[s];
+  for(let i=0;i<q.length;i++){for(const v of (ADJ2[q[i]]||[]))if(!(v in d)){d[v]=d[q[i]]+1;q.push(v);}}return d;}
+function routeCount(s,t,ds){
+  const L=ds[t],layers={};
+  for(const k in ds){if(ds[k]<=L)(layers[ds[k]]=layers[ds[k]]||[]).push(k);}
+  const cnt={};cnt[s]=1;
+  for(let d=1;d<=L;d++)for(const v of (layers[d]||[])){let c=0;
+    for(const u of (RADJ[v]||[]))if(ds[u]===d-1)c+=cnt[u]||0;cnt[v]=c;}
+  return cnt[t]||0;
+}
+function samplePath(s,t){
+  // frequency-weighted: most everyday route wins
+  const D={},P={},heap=[[0,s,null]];
+  while(heap.length){
+    heap.sort(function(a,b){return a[0]-b[0];});
+    const it=heap.shift(),c=it[0],k=it[1];
+    if(k in D)continue;D[k]=c;P[k]=it[2];
+    if(k===t)break;
+    for(const v of (ADJ2[k]||[])){
+      if(v in D)continue;
+      const w=k+v;heap.push([c+Math.pow(FREQ[w]||99,1.5),v,[k,w]]);
+    }
+  }
+  if(!(t in D))return [];
+  const out=[];let cur=t;
+  while(P[cur]){out.push(P[cur][1]);cur=P[cur][0];}
+  return out.reverse();
+}
+function holeHazards(s,t,par){
+  const ds=bfsFwd(s),dg=bfsRev(RADJ,t);
+  const fair=[];for(const k in ds)if(k in dg&&ds[k]+dg[k]===par)fair.push(k);
+  const bunk=new Set();let wat=0;
+  for(const f of fair)for(const v of (ADJ2[f]||[])){
+    if(ds[v]+((dg[v]!==undefined)?dg[v]:1e9)===par)continue;
+    const rem=dg[v];
+    if((OUTDEG[v]||0)<=1&&(rem===undefined||ds[f]+1+rem>par+1))bunk.add(v);
+    if((OUTDEG[v]||0)>=70&&(rem===undefined||ds[f]+1+rem>par+1))wat++;
+  }
+  const fd=bfsRev(FRADJ,t),spar=fd[s];
+  return {bunkers:Math.min(bunk.size,4),water:wat>=2,secret_par:spar,
+    secret_cut:spar!==undefined&&spar<par,goal_indeg:(RADJ[t]||[]).length};
+}
+function genRandomCourse(){
+  const layout=[3,4,4,3,5,4,3,4,5],holes=[];let guard=0;
+  while(holes.length<9&&guard++<3000){
+    const s=DATA.cand[Math.floor(Math.random()*DATA.cand.length)];
+    const ds=bfsFwd(s),want=layout[holes.length];
+    const ts=DATA.cand.filter(function(t){return ds[t]===want&&t!==s&&!ACES.has(s+t);});
+    if(!ts.length)continue;
+    const t=ts[Math.floor(Math.random()*ts.length)];
+    const rc=routeCount(s,t,ds);
+    if(rc<2||rc>12)continue;
+    const hz=holeHazards(s,t,want);
+    holes.push(Object.assign({hole:holes.length+1,start:s,goal:t,par:want,routes:rc,
+      dogleg:rc<=2,sample_path:samplePath(s,t)},hz));
+  }
+  return {name:'ランダム・リンクス',en:'RANDOM LINKS',holes:holes};
+}
+/* ---------- continuous-difficulty pool + course builder ---------- */
+const GRADE=DATA.grade||{};
+function h32(str){let h=2166136261;for(let i=0;i<str.length;i++){h^=str.charCodeAt(i);h=Math.imul(h,16777619);}return (h>>>0)%1000;}
+function gradeVal(k){const g=GRADE[k];if(g===undefined)return 9;return g>=9?8.5:g>=8?7:g;}
+function poolParams(s){
+  return {
+    gMax: 2.4 + s*0.066,              // 1→~2.5 … 100→~9
+    fMax: 3 + s*0.49,                 // 1→3.5 … 100→52 (all common)
+    rareShare: s<=78 ? 0 : (s-78)/22, // 79-100 progressively adds rare words
+    generous: s<=30                   // easy bands get par = shortest+1
+  };
+}
+function fracIn(x,limit){ // deterministic fractional threshold: every slider point matters
+  const fl=Math.floor(limit);
+  if(x<fl)return true; if(x>fl)return false;
+  return h32(''+x+limit.toFixed(3))<((limit-fl)*1000);
+}
+function wordInPool(w,P){
+  const f=FREQ[w]||99;
+  if(f>Math.ceil(P.fMax))return false;
+  if(f===Math.ceil(P.fMax)&&f>Math.floor(P.fMax)&&h32(w)>= (P.fMax-Math.floor(P.fMax))*1000)return false;
+  for(const k of w){const g=gradeVal(k);
+    if(g>Math.ceil(P.gMax))return false;
+    if(g>P.gMax&&h32(k+'g')>=(P.gMax-Math.floor(P.gMax))*1000)return false;}
+  return true;
+}
+let poolCache={s:-1};
+function buildPool(s){
+  if(poolCache.s===s)return poolCache;
+  const P=poolParams(s), A={}, W=new Set();
+  for(let i=0;i<DATA.d.w2.length;i+=2){
+    const w=DATA.d.w2.slice(i,i+2);
+    if(!wordInPool(w,P))continue;
+    (A[w[0]]=A[w[0]]||new Set()).add(w[1]);W.add(w);
+  }
+  if(P.rareShare>0){
+    for(const w of DATA.rare){
+      if(w.length!==2||w[0]===w[1])continue;
+      if(h32(w+'r')>=P.rareShare*1000)continue;
+      (A[w[0]]=A[w[0]]||new Set()).add(w[1]);W.add(w);
+    }
+  }
+  poolCache={s:s,A:A,W:W,P:P,kanji:Object.keys(A).length,words:W.size};
+  return poolCache;
+}
+function poolBFS(A,s){const d={};d[s]=0;const q=[s];
+  for(let i=0;i<q.length;i++){for(const v of (A[q[i]]||[]))if(!(v in d)){d[v]=d[q[i]]+1;q.push(v);}}return d;}
+function poolNaturalPath(pool,s,t,maxlen){
+  // layered BFS then greedy backwalk picking the most common word each step — O(V+E)
+  const dist=poolBFS(pool.A,s);
+  if(dist[t]===undefined||dist[t]>maxlen)return null;
+  // reverse adjacency within pool, built lazily per call on the shortest-path DAG only
+  const words=[];let cur=t;
+  for(let step=dist[t];step>0;step--){
+    let best=null,bw=null;
+    for(const k in pool.A){
+      if(dist[k]!==step-1)continue;
+      if(!pool.A[k].has(cur))continue;
+      const w=k+cur,f=FREQ[w]||60;
+      if(best===null||f<best){best=f;bw=w;}
+    }
+    if(!bw)return null;
+    words.push(bw);cur=bw[0];
+  }
+  return words.reverse();
+}
+function buildHole(pool,wantPar,avoid){
+  const truedist=pool.P.generous?wantPar-1:wantPar;
+  const cands=Object.keys(pool.A).filter(function(k){return pool.A[k].size>=2&&!avoid.has(k);});
+  for(let t=0;t<500;t++){
+    const s=cands[Math.floor(Math.random()*cands.length)];
+    const dP=poolBFS(pool.A,s);
+    const ts=cands.filter(function(x){return dP[x]===truedist&&x!==s&&!ACES.has(s+x);});
+    if(!ts.length)continue;
+    const g=ts[Math.floor(Math.random()*ts.length)];
+    const hz=holeHazards(s,g,truedist);
+    const sp=poolNaturalPath(pool,s,g,truedist)||[];
+    return Object.assign({start:s,goal:g,par:wantPar,routes:Math.max(hz.goal_indeg?2:2,2),
+      dogleg:false,sample_path:sp},hz,{par:wantPar});
+  }
+  return null;
+}
+function holeInfo(pool,s,t){
+  if(!s||!t)return null;
+  const dP=poolBFS(pool.A,s), d=dP[t];
+  return {dist:d, par:d===undefined?null:(pool.P.generous?d+1:d)};
+}
+/* ---------- builder UI state ---------- */
+let bCourse=null;
+function bRefresh(){
+  const s=+$('bDiff').value;
+  $('bDiffV').textContent=s;
+  const pool=buildPool(s);
+  $('bPool').textContent='漢字 '+pool.kanji+' · 語 '+pool.words;
+  $('bPoolLine').textContent='この難易度で使える語彙プール。1目盛りごとに増減します。'+(pool.P.generous?'（この帯はパーに余裕+1）':'')+(pool.P.rareShare>0?'（希少語 '+Math.round(pool.P.rareShare*100)+'% 混入）':'');
+  bRenderHoles();
+}
+function bRenderHoles(){
+  const el=$('bHoles');
+  if(!bCourse){bCourse={name:'',en:'CUSTOM',holes:Array.from({length:9},function(_,i){return{hole:i+1,start:'',goal:'',par:[3,3,4,4,4,4,3,4,5][i],routes:2,dogleg:false,sample_path:[],bunkers:1,water:false,secret_cut:false,secret_par:null,goal_indeg:0};})};}
+  const pool=buildPool(+$('bDiff').value);
+  const seen={};
+  bCourse.holes.forEach(function(H){[H.start,H.goal].forEach(function(k){if(k)seen[k]=(seen[k]||0)+1;});});
+  let done=0,parTot=0;
+  el.innerHTML=bCourse.holes.map(function(H,i){
+    const info=holeInfo(pool,H.start,H.goal);
+    const ok=info&&info.par!==null;
+    if(ok){done++;parTot+=info.par;}
+    const dup=(H.start&&seen[H.start]>1)||(H.goal&&seen[H.goal]>1);
+    const stat=!H.start||!H.goal?'<span style="color:var(--pencil)">未設定</span>'
+      : ok?'<span style="color:var(--turf)">PAR '+info.par+'（最短'+info.dist+'語）'+(H.secret_cut?' ▚':'')+'</span>'
+      : '<span style="color:var(--shu)">この難易度では到達不可</span>';
+    return '<div style="display:flex;align-items:center;gap:7px;border:1px solid var(--rule);border-radius:3px;padding:6px 10px;margin:4px 0;background:var(--paper-hi)">'
+      +'<span style="display:flex;flex-direction:column;gap:1px"><button class="bmove" data-i="'+i+'" data-d="-1" '+(i===0?'disabled':'')+'>▲</button><button class="bmove" data-i="'+i+'" data-d="1" '+(i===8?'disabled':'')+'>▼</button></span>'
+      +'<b style="width:24px">H'+(i+1)+'</b>'
+      +'<input data-i="'+i+'" data-f="start" class="bK" value="'+H.start+'" maxlength="1" style="width:40px;text-align:center;font-family:serif;font-size:19px;font-weight:700;border:1.3px solid var(--ink);border-radius:3px;background:#fff">'
+      +'<span style="color:var(--pencil)">→</span>'
+      +'<input data-i="'+i+'" data-f="goal" class="bK" value="'+H.goal+'" maxlength="1" style="width:40px;text-align:center;font-family:serif;font-size:19px;font-weight:700;color:var(--shu);border:1.3px solid var(--ink);border-radius:3px;background:#fff">'
+      +(dup?'<span title="他のホールと同じ漢字" style="color:var(--shu)">⚠重複</span>':'')
+      +'<span style="flex:1">'+stat+'</span>'
+      +'<select class="bpar" data-i="'+i+'" title="自動生成の目標パー" style="font-family:inherit;font-size:12px;border:1.2px solid var(--rule);border-radius:3px;background:#fff;padding:2px">'
+        +[3,4,5].map(function(p){return '<option '+(H.par===p?'selected':'')+'>'+p+'</option>';}).join('')+'</select>'
+      +'<button class="ghost" style="padding:4px 10px;font-size:11px" onclick="window.bAuto('+i+')">自動</button></div>';
+  }).join('');
+  $('bSummary').textContent='完成 '+done+'/9ホール ・ 合計PAR '+parTot+(Object.keys(seen).some(function(k){return seen[k]>1;})?' ・ ⚠ 漢字の重複あり':'');
+  el.querySelectorAll('.bmove').forEach(function(b){
+    b.onclick=function(){
+      const i=+b.dataset.i, j=i+(+b.dataset.d);
+      const t=bCourse.holes[i];bCourse.holes[i]=bCourse.holes[j];bCourse.holes[j]=t;
+      bCourse.holes.forEach(function(H,k){H.hole=k+1;});
+      bRenderHoles();
+    };
+  });
+  el.querySelectorAll('.bpar').forEach(function(sel){
+    sel.onchange=function(){bCourse.holes[+sel.dataset.i].par=+sel.value;};
+  });
+  bRenderManage();
+  el.querySelectorAll('.bK').forEach(function(inp){
+    inp.onchange=function(){
+      const H=bCourse.holes[+inp.dataset.i];
+      H[inp.dataset.f]=inp.value.trim();
+      const pool=buildPool(+$('bDiff').value);
+      const info=holeInfo(pool,H.start,H.goal);
+      if(info&&info.par!==null){
+        H.par=info.par;
+        Object.assign(H,holeHazards(H.start,H.goal,info.dist));
+        H.sample_path=poolNaturalPath(pool,H.start,H.goal,info.dist)||[];
+      }
+      bRenderHoles();
+    };
+  });
+}
+window.bAuto=function(i){
+  const pool=buildPool(+$('bDiff').value);
+  const avoid=new Set();bCourse.holes.forEach(function(H,j){if(j!==i){if(H.start)avoid.add(H.start);if(H.goal)avoid.add(H.goal);}});
+  const target=bCourse.holes[i].par||[3,3,4,4,4,4,3,4,5][i];
+  const H=buildHole(pool,target,avoid);
+  if(H){H.hole=i+1;bCourse.holes[i]=H;bRenderHoles();}
+  else $('bStat').textContent='この難易度では生成できません。少し上げてみてください。';
+};
+/* ---- manage the course list ---- */
+function isBuiltin(c){return c.en==='PROLOGUE'||c.en==='CHAPTER I';}
+function isLocal(c){try{return JSON.parse(localStorage.getItem('kg_courses')||'[]').some(function(x){return x.name===c.name;});}catch(e){return false;}}
+function bRenderManage(){
+  const el=$('bManage');if(!el)return;
+  el.innerHTML=COURSES.map(function(c,i){
+    const kind=isBuiltin(c)?'公式':isLocal(c)?'端末':'公開';
+    let acts='<button class="ghost bm" data-a="play" data-i="'+i+'">▶ 選ぶ</button>';
+    if(!isBuiltin(c)){
+      acts+='<button class="ghost bm" data-a="edit" data-i="'+i+'">✎ 編集</button>';
+      if(isDev())acts+='<button class="ghost bm" data-a="del" data-i="'+i+'" style="color:var(--shu);border-color:var(--shu)">🗑 削除</button>';
+    }
+    return '<div style="display:flex;align-items:center;gap:8px;border:1px solid var(--rule);border-radius:3px;padding:6px 10px;margin:4px 0;background:var(--paper-hi)">'
+      +'<b>'+c.name+'</b><span class="sub" style="margin:0;font-size:10px">'+kind+(c.by?'・'+c.by:'')+'</span>'
+      +'<span style="margin-left:auto;display:flex;gap:5px">'+acts+'</span></div>';
+  }).join('');
+  el.querySelectorAll('.bm').forEach(function(b){
+    b.onclick=async function(){
+      const i=+b.dataset.i, c=COURSES[i];
+      if(b.dataset.a==='play'){setCourse(i);$('tabRound').onclick();renderPreround();return;}
+      if(b.dataset.a==='edit'){bCourse=JSON.parse(JSON.stringify(c));$('bName').value=c.name;bRenderHoles();window.scrollTo(0,0);return;}
+      if(b.dataset.a==='del'){
+        if(!b.dataset.arm){b.dataset.arm='1';b.textContent='もう一度で確定';return;}
+        if(isLocal(c)){
+          try{const cc=JSON.parse(localStorage.getItem('kg_courses')||'[]').filter(function(x){return x.name!==c.name;});
+            localStorage.setItem('kg_courses',JSON.stringify(cc));}catch(e){}
+        } else if(BACKEND()){
+          try{await fetch(BACKEND()+'/courses?name='+encodeURIComponent(c.name)+'&key=albatross',{method:'DELETE',signal:AbortSignal.timeout(5000)});}catch(e){}
+        }
+        COURSES.splice(i,1);
+        if(courseIdx>=COURSES.length)setCourse(0);
+        bRenderManage();renderPreround();
+      }
+    };
+  });
+}
+$('bTest').onclick=function(){
+  const c=bValidCourse();if(!c){$('bStat').textContent='未完成のホールがあります';return;}
+  const t=JSON.parse(JSON.stringify(c));t.name=($('bName').value.trim()||'試打')+' *';t._temp=true;
+  for(let i=COURSES.length-1;i>=0;i--)if(COURSES[i]._temp)COURSES.splice(i,1);
+  COURSES.push(t);setCourse(COURSES.length-1);
+  $('tabRound').onclick();renderPreround();
+};
+$('bDiff').oninput=bRefresh;
+$('bGen').onclick=function(){
+  bCourse={name:'',en:'CUSTOM',holes:[]};
+  const pool=buildPool(+$('bDiff').value),avoid=new Set();
+  const layout=[3,3,4,4,4,4,3,4,5];
+  for(const p of layout){
+    const H=buildHole(pool,p,avoid);
+    if(!H){$('bStat').textContent='H'+(bCourse.holes.length+1)+'が生成できません。難易度を1-2上げてください。';bCourse=null;bRenderHoles();return;}
+    H.hole=bCourse.holes.length+1;bCourse.holes.push(H);avoid.add(H.start);avoid.add(H.goal);
+  }
+  $('bStat').textContent='生成しました。ホールは手で編集・再抽選できます。';
+  bRenderHoles();
+};
+function bValidCourse(){
+  if(!bCourse)return null;
+  const pool=buildPool(+$('bDiff').value);
+  for(const H of bCourse.holes){
+    const info=holeInfo(pool,H.start,H.goal);
+    if(!info||info.par===null)return null;
+  }
+  return bCourse;
+}
+$('bSaveLocal').onclick=function(){
+  const c=bValidCourse();if(!c){$('bStat').textContent='未完成のホールがあります';return;}
+  c.name=($('bName').value.trim()||'マイコース');
+  COURSES.push(JSON.parse(JSON.stringify(c)));
+  try{const cc=JSON.parse(localStorage.getItem('kg_courses')||'[]');cc.push(c);localStorage.setItem('kg_courses',JSON.stringify(cc));}catch(e){}
+  setCourse(COURSES.length-1);$('tabRound').onclick();renderPreround();
+};
+$('bPublish').onclick=async function(){
+  const c=bValidCourse();if(!c){$('bStat').textContent='未完成のホールがあります';return;}
+  c.name=($('bName').value.trim()||'マイコース');c.by=USER;
+  if(!BACKEND()){
+    // repo-publish: everyone gets it once community.json is committed
+    const merged=COMMUNITY.filter(function(x){return x.name!==c.name;}).concat([c]);
+    const txt=JSON.stringify(merged);
+    $('bIO').value=txt;
+    const repo=repoURL();
+    let link='';
+    if(repo){
+      const isNew=COMMUNITY.length===0;
+      const href=isNew
+        ? repo+'/new/main?filename=community.json&value='+encodeURIComponent(txt).slice(0,7000)
+        : repo+'/edit/main/community.json';
+      link=' <a href="'+href+'" target="_blank" rel="noopener" style="color:var(--turf);font-weight:700">GitHubで'+(isNew?'作成':'更新')+' ▸</a>';
+    }
+    $('bStat').innerHTML='下のJSONをリポジトリの <b>community.json</b> に保存すると全員に公開されます。'+link
+      +' <button class="ghost" style="padding:3px 8px;font-size:11px" onclick="navigator.clipboard&&navigator.clipboard.writeText(document.getElementById(\'bIO\').value)">コピー</button>'
+      +'（サーバーURLを管理タブに入れると、この手順は自動化されます）';
+    COMMUNITY=merged;
+    COURSES.push(JSON.parse(JSON.stringify(c)));setCourse(COURSES.length-1);
+    return;
+  }
+  $('bStat').textContent='公開中…';
+  try{
+    const r=await fetch(BACKEND()+'/courses',{method:'POST',headers:{'Content-Type':'application/json'},
+      body:JSON.stringify(c),signal:AbortSignal.timeout(6000)});
+    const j=await r.json();
+    if(j.ok){$('bStat').textContent='公開しました ✓ 全プレイヤーのコース一覧に載ります';
+      COURSES.push(JSON.parse(JSON.stringify(c)));setCourse(COURSES.length-1);$('tabRound').onclick();renderPreround();}
+    else $('bStat').textContent='公開失敗: '+(j.reason||'');
+  }catch(e){$('bStat').textContent='サーバーに届きません: '+e.message;}
+};
+$('bExport').onclick=function(){if(bCourse)$('bIO').value=JSON.stringify(bCourse);};
+$('bImport').onclick=function(){
+  try{const c=JSON.parse($('bIO').value);
+    if(c&&c.holes){bCourse=c;$('bName').value=c.name||'';bRenderHoles();}}
+  catch(e){$('bIO').value='JSONが不正: '+e.message;}
+};
+let COMMUNITY=[];   // courses currently in the repo's community.json
+function repoURL(){
+  const h=location.hostname, p=location.pathname.split('/').filter(Boolean);
+  if(h.endsWith('.github.io')&&p.length) return 'https://github.com/'+h.split('.')[0]+'/'+p[0];
+  return null;
+}
+async function loadPublished(){
+  // priority 1: real server, if configured
+  if(BACKEND()){
+    try{
+      const r=await fetch(BACKEND()+'/courses',{signal:AbortSignal.timeout(6000)});
+      const arr=await r.json();
+      if(Array.isArray(arr)){mergeCourses(arr);return;}
+    }catch(e){}
+  }
+  // priority 2: community.json committed in this repo (no server needed)
+  try{
+    const r=await fetch('community.json',{cache:'no-store'});
+    if(r.ok){
+      const arr=await r.json();
+      if(Array.isArray(arr)){COMMUNITY=arr;mergeCourses(arr);}
+    }
+  }catch(e){}
+}
+function mergeCourses(arr){
+  const have=new Set(COURSES.map(function(c){return c.name;}));
+  arr.forEach(function(c){if(c&&c.holes&&!have.has(c.name)){COURSES.push(c);have.add(c.name);}});
+  if(!$('preround').hidden)renderPreround();
+}
+function setCourse(i){
+  if(i==='random'){const c=genRandomCourse();COURSES.push(c);courseIdx=COURSES.length-1;}
+  else courseIdx=i;
+  HOLES=COURSES[courseIdx].holes;
+  h=0;scores=Array(HOLES.length).fill(null);
+  document.querySelector('.datebox').innerHTML='本日のコース · '+COURSES[courseIdx].name+' · PAR <span id="coursepar">'+HOLES.reduce(function(a,b){return a+b.par;},0)+'</span>';
+}
+function devOff(){
+  try{localStorage.removeItem('kg_dev');}catch(e){}
+  if($('tabMaker'))$('tabMaker').hidden=true;
+  if($('optDev'))$('optDev').textContent='開発者';
+  const pb=$('probtn'),cb=$('commonbtn');
+  if(pb)pb.style.display='none';
+  if(cb)cb.style.display='none';
+}
+function renderFinalLB(key,tot){
+  const st=STATS[key], medal=['🥇','🥈','🥉','４','５'];
+  const el=$('finlb');if(!el)return;
+  el.innerHTML='<div class="lbbox" style="margin:8px auto;max-width:320px;text-align:left"><div class="lbtitle">このコースのリーダーボード</div>'
+    +((st&&st.top&&st.top.length)?st.top.slice(0,5).map(function(e,i){
+        return '<div class="lbrow'+(e.user===USER&&e.score===tot?' lbme':'')+'"><span class="lbmedal">'+medal[i]+'</span><span class="lbname">'+e.user+'</span><span class="lbscore">'+e.score+'打</span></div>';
+      }).join(''):'<div class="sub" style="margin:2px 0">まだ記録がありません</div>')
+    +'<div class="lbrow" style="border-top:1px dashed var(--rule);margin-top:3px;padding-top:5px"><span class="lbmedal">🏌</span><span class="lbname">あなた</span><span class="lbscore">'+tot+'打</span></div></div>';
+}
+const CADDY={
+  birdie:['〈キャディ〉ナイスバーディー！','〈キャディ〉その調子です','〈キャディ〉お見事の一言'],
+  eagle:['〈キャディ〉イーグル！ 語彙の翼ですな','〈キャディ〉これは館報に載せねば'],
+  par:['〈キャディ〉堅実、良いゴルフです','〈キャディ〉パーは紳士の証']
+};
+function caddy(k){const a=CADDY[k];return a?a[Math.floor(Math.random()*a.length)]+'<br>':'';}
+const HOLENAMES={
+ 'PROLOGUE':['朝いちばん','北風の道','定年坂','間近の空','前回の借り','長い午後','檜舞台','若葉マーク','打開の丘'],
+ 'CHAPTER I':['めぐりの門','ことだまの杜','回り道','山彦','木漏れ日','ふたまた杉','静寂','長考','千秋楽']
+};
+function holeName(){const a=HOLENAMES[COURSES[courseIdx].en];return a?a[h]:'';}
+function holedSound(par,strokes){return (par>=4&&strokes>=par-1)?'putt':'cup';}
+function backToPreround(){
+  ambient(false);
+  $('finalzone').hidden=true;$('game').hidden=true;$('preround').hidden=false;
+  $('hanko').classList.remove('stamped');
+  renderPreround();
+}
+function startHole(){
+  chain=[];used=new Set();pos=hole().start;progress=0;inRough=false;trail=[];
+  holeClubUsed=false;armedId=null;driverPending=null;penalty=0;
+  dgoal=bfsRev(RADJ,hole().goal);
+  fdgoal=bfsRev(FRADJ,hole().goal);
+  $('playzone').hidden=false;$('resultzone').hidden=true;
+  msg('','');drawMap(hole());render();$('wordin').focus();
+}
+function next(){if(h<HOLES.length-1){h++;startHole();}else finish();}
+function finish(){
+  $('playzone').hidden=true;$('resultzone').hidden=true;$('finalzone').hidden=false;
+  const par=HOLES.reduce(function(a,b){return a+b.par;},0),tot=scores.reduce(function(a,b){return a+b;},0),d=tot-par;
+  const key=courseKey(), prevBest=bestFor(key), improved=saveRecord(key,tot);
+  postScore(key,tot,scores.slice()).then(function(){return fetchStats(key);}).then(function(){renderFinalLB(key,tot);});
+  const repRows=Object.keys(ROUNDLOG.model).filter(function(w){return !ROUNDLOG.mine[w];}).map(function(w){return {w:w,sub:'模範ルートより'};});
+  if(repRows.length)setTimeout(function(){openReport('ラウンドレポート — お手本のことば',repRows);},1000);
+  const recLine = improved!==null&&prevBest!==undefined ? '自己ベスト更新！ '+prevBest+' → '+tot
+    : prevBest===undefined ? '初ラウンド記録: '+tot
+    : '自己ベスト: '+prevBest;
+  $('finaltxt').innerHTML='ラウンド終了<b class="'+(d<0?'under':d>0?'over':'')+'">'+tot+' ('+(d>0?'+':'')+(d===0?'E':d)+')</b>'
+    +'<span style="display:block;font-family:sans-serif;font-size:12px;letter-spacing:.1em;color:'+(improved!==null?'var(--gold)':'var(--ink-soft)')+';margin-top:6px">'+USER+' · '+recLine+'</span>';
+  const emo=scores.map(function(s,i){const df=s-HOLES[i].par;
+    return df<=-2?'🦅':df===-1?'🐦':df===0?'⛳':df===1?'🟩':df===2?'🟨':'🟥';}).join('');
+  $('sharetext').textContent='漢字ゴルフ ⛳ 常用CC '+COURSES[courseIdx].name+'\n'+emo+'\n'+tot+'打（'+(d>0?'+':'')+(d===0?'E':d)+'）/ PAR '+par;
+  $('againrow').innerHTML='<button class="ghost" onclick="window.noteCourse(this)">模範ルートを全部ノートへ</button>'
+    +'<button class="ghost" onclick="window.replayCourse()">同じコースをもう一度</button>'
+    +'<button class="ghost" onclick="window.nextCourse()">次のコース ▸</button>'
+    +'<button class="ghost" onclick="window.randomCourse()">⚄ ランダムコース</button>';
+  renderCard();
+  requestAnimationFrame(function(){$('hanko').classList.add('stamped');});
+}
+window.noteCourse=function(btn){
+  let n=0;
+  HOLES.forEach(function(H){H.sample_path.forEach(function(w){if(!NOTES[w])n++;addNote(w);});});
+  btn.textContent='追加しました ✓（'+n+'語）';btn.disabled=true;
+};
+window.resumeHole=function(){
+  penalty++;scores[h]=null;lastMode=null;
+  $('resultzone').hidden=true;$('playzone').hidden=false;
+  msg('模範ルートを見た分 +1打。ここからカウントは無制限 — ホールアウトまで',true);
+  render();$('wordin').focus();
+};
+window.replayCourse=function(){setCourse(courseIdx);backToPreround();};
+window.nextCourse=function(){setCourse((courseIdx+1)%COURSES.length);backToPreround();};
+window.randomCourse=function(){setCourse('random');backToPreround();};
+/* ---- club signboard: collision-audited ribbon routing ---- */
+const RIBBONS=[
+  {t:[272,502],g:[303,398],bow:14},{t:[316,372],g:[321,252],bow:-16},
+  {t:[308,226],g:[270,122],bow:18},{t:[232,100],g:[138,94],bow:-13},
+  {t:[95,112],g:[68,252],bow:-16},{t:[66,284],g:[98,404],bow:-15},
+  {t:[122,434],g:[196,482],bow:10},{t:[208,444],g:[190,318],bow:16},
+  {t:[186,288],g:[212,158],bow:-15}
+];
+function rpt(R,u){
+  const mx=(R.t[0]+R.g[0])/2,my=(R.t[1]+R.g[1])/2;
+  const dx=R.g[0]-R.t[0],dy=R.g[1]-R.t[1],L=Math.hypot(dx,dy);
+  const cx=mx-dy/L*R.bow,cy=my+dx/L*R.bow,a=1-u;
+  return [a*a*R.t[0]+2*a*u*cx+u*u*R.g[0], a*a*R.t[1]+2*a*u*cy+u*u*R.g[1]];
+}
+function rq(R){
+  const mx=(R.t[0]+R.g[0])/2,my=(R.t[1]+R.g[1])/2;
+  const dx=R.g[0]-R.t[0],dy=R.g[1]-R.t[1],L=Math.hypot(dx,dy);
+  return 'M '+R.t[0]+' '+R.t[1]+' Q '+(mx-dy/L*R.bow)+' '+(my+dx/L*R.bow)+' '+R.g[0]+' '+R.g[1];
+}
+function labelPos(p){const cx=235,cy=280,v=[p[0]-cx,p[1]-cy],l=Math.hypot(v[0],v[1])||1;
+  return [p[0]+v[0]/l*22, p[1]+v[1]/l*22];}
+function courseTrees(labels){
+  const out=[];
+  for(let x=30;x<=440;x+=38)for(let y=40;y<=520;y+=38){
+    let ok=true;
+    for(const R of RIBBONS){for(let u=0;u<=1;u+=.08){
+      const p=rpt(R,u);if(Math.hypot(p[0]-x,p[1]-y)<34){ok=false;break;}}if(!ok)break;}
+    if(ok)for(const L of labels)if(Math.hypot(L[0]-x,L[1]-y)<30){ok=false;break;}
+    if(Math.hypot(x-234,y-533)<52)ok=false;
+    if(x<70&&y<62)ok=false; if(x>400&&y<62)ok=false;
+    if(ok&&((x*7+y*13)%3!==0))ok=false;
+    if(ok)out.push([x+((x*y)%11)-5,y+((x+y)%9)-4]);
+  }
+  return out;
+}
+function renderPreround(){
+  let chips='<div class="grouplabel">クラブ公式</div><div class="toolrow" style="margin:2px 0 6px">';
+  COURSES.forEach(function(c,i){
+    if(!isBuiltin(c))return;
+    chips+='<button class="ghost" style="'+(i===courseIdx?'background:linear-gradient(#F6EBCB,#EBDCB2);box-shadow:inset 0 0 0 1.4px var(--gold);font-weight:700;':'')+'" onclick="window.pickCourse('+i+')">'+c.name+'</button>';});
+  chips+='<button class="ghost" onclick="window.pickCourse(\'random\')">⚄ ランダム</button></div>';
+  const comC=COURSES.map(function(c,i){return [c,i];}).filter(function(x){return !isBuiltin(x[0])&&!x[0]._temp;});
+  if(comC.length){
+    chips+='<div class="grouplabel">コミュニティ</div><div class="toolrow" style="margin:2px 0 6px">';
+    comC.forEach(function(x){
+      chips+='<button class="ghost" style="'+(x[1]===courseIdx?'background:linear-gradient(#F6EBCB,#EBDCB2);box-shadow:inset 0 0 0 1.4px var(--gold);font-weight:700;':'')+'" onclick="window.pickCourse('+x[1]+')">'+x[0].name+'</button>';});
+    chips+='</div>';
+  }
+  if(IMGOK.size===9){
+    $('courseview').innerHTML='<div class="mgrid">'+HOLES.map(function(H){
+      const v=recOf(courseKey()), mine=v.holes&&v.holes[H.hole];
+      const st=STATS[courseKey()], hb=st&&st.holeBest&&st.holeBest[H.hole];
+      const havg=st&&st.holeSum&&st.holeCount&&st.holeCount[H.hole]?(st.holeSum[H.hole]/st.holeCount[H.hole]).toFixed(1):null;
+      return '<div class="mcard" data-h="'+H.hole+'"><div class="mimg"><img src="'+MAPIMG(H)+'" alt="H'+H.hole+'" loading="lazy">'
+        +'<span class="mno">'+H.hole+'</span></div>'
+        +'<div class="mfoot"><span class="mk">'+H.start+'</span><span class="marr">→</span><span class="mk mkg">'+H.goal+'</span>'
+        +'<span class="mpar">PAR '+H.par+' · '+H.par+'語'+(H.secret_cut?' ▚':'')+'</span></div>'
+        +'<div class="mdetail"'+(window.statsAll?'':' hidden')+'>あなた: '+(mine!==undefined?mine+'打':'—')
+        +'　最高: '+(hb?hb.score+'打（'+hb.user+'）':'—')
+        +'　平均: '+(havg?havg+'打':'—')+'</div></div>';
+    }).join('')+'</div>';
+    document.querySelectorAll('.mcard').forEach(function(el){
+      el.addEventListener('click',function(){
+        window.statsAll=!window.statsAll;
+        document.querySelectorAll('.mdetail').forEach(function(dt){dt.hidden=!window.statsAll;});
+      });
+    });
+  } else {
+    $('courseview').innerHTML='<div class="holelist">'+HOLES.map(function(H){
+      return '<div class="hlrow"><b>H'+H.hole+'</b><span class="mk">'+H.start+'</span><span class="marr">→</span><span class="mk mkg">'+H.goal+'</span>'
+        +'<span class="mpar" style="margin-left:auto">PAR '+H.par+' · '+H.par+'語'+(H.secret_cut?' ▚':'')+'</span></div>';
+    }).join('')+'</div>';
+  }
+  document.getElementById('coursechips').innerHTML=chips;
+  const CC=COURSES[courseIdx];
+  document.getElementById('chapterplate').innerHTML=
+    '<span class="chapen">'+(CC.en||'COURSE')+'</span><span class="chapname">'+CC.name+'</span><span class="chapdiv">— ⛳ —</span>';
+  const v=recOf(courseKey()), b=v.best;
+  document.getElementById('coursebest').textContent = USER? (USER+' の自己ベスト: '+(b!==undefined?b+'打':'—')+(v.dq?'（棄権 '+v.dq+'回）':'')) : '';
+  const st=STATS[courseKey()];
+  document.getElementById('coursestats').textContent = st&&st.rounds
+    ? 'みんなの記録 — ベスト: '+st.bestTotal+'打（'+(st.bestUser||'?')+'）・平均: '+(st.sumTotal/st.rounds).toFixed(1)+'打・'+st.rounds+'ラウンド'
+    : (BACKEND()?'みんなの記録 — まだデータがありません':'');
+  const medal=['🥇','🥈','🥉','４','５'];
+  document.getElementById('lb').innerHTML='<div class="lbbox"><div class="lbtitle">リーダーボード</div>'+((st&&st.top&&st.top.length)
+    ? st.top.slice(0,5).map(function(e,i){
+        return '<div class="lbrow"><span class="lbmedal">'+medal[i]+'</span><span class="lbname">'+e.user+'</span><span class="lbscore">'+e.score+'打</span></div>';
+      }).join('')
+    : '<div class="sub" style="margin:2px 0">まだ記録がありません</div>')+'</div>';
+  if(BACKEND()&&!st)fetchStats(courseKey()).then(function(j){if(j)renderPreround();});
+  let opts='<div class="sub" style="text-align:left;margin:6px 0 2px"><b>キャディバッグ</b> — クラブを最大3本選ぶ。特殊ショットはラウンドで合計3回・同一ホール1回まで。</div>';
+  if(clubsOn()){
+    for(const k in CLUB_DEFS){const c=CLUB_DEFS[k];
+      opts+='<label class="clubopt" title="'+c.desc+'"><input type="checkbox" name="bag" value="'+k+'"><div class="cwrap"><b>'+c.icon+' '+c.name+'</b><div class="exf">'+c.ex+'</div></div></label>';}
+  } else opts='';
+  $('clubpick').innerHTML=opts;
+  document.querySelectorAll('input[name=bag]').forEach(function(cb){
+    cb.onchange=function(){
+      const n=document.querySelectorAll('input[name=bag]:checked').length;
+      if(n>3){cb.checked=false;msgPre('バッグは3本まで');}
+    };
+  });
+}
+function msgPre(t){/* light inline notice */ const s=document.querySelector('#preround .sub'); if(s){s.dataset.o=s.dataset.o||s.textContent;} }
+$('teeoff').onclick=function(){
+  myBag=Array.from(document.querySelectorAll('input[name=bag]:checked')).map(function(c){return c.value;});
+  bagUses=myBag.length?3:0;
+  $('preround').hidden=true;$('game').hidden=false;
+  ROUNDLOG={model:{},mine:{}};SFX.club();ambient(true);startHole();
+};
+$('swing').onclick=function(){lastSwing=Date.now();swing();};
+let composing=false;
+const inp=$('wordin');
+inp.addEventListener('compositionstart',function(){composing=true;});
+inp.addEventListener('compositionend',function(){composing=false;});
+let lastSwing=0;
+function trySwing(){const now=Date.now();if(now-lastSwing<250)return;lastSwing=now;swing();}
+inp.addEventListener('keydown',function(e){
+  if(e.key==='Enter'&&!e.isComposing&&!composing&&e.keyCode!==229)trySwing();
+});
+inp.addEventListener('keyup',function(e){
+  if(e.key==='Enter'&&!e.isComposing&&!composing&&inp.value.trim())trySwing();
+});
+$('undo').onclick=function(){
+  if(!chain.length||scores[h]!==null)return;
+  const m=chain.pop();
+  m.w.split('・').forEach(function(x){used.delete(x);});
+  if(m.club){bagUses++;holeClubUsed=false;}
+  driverPending=null;armedId=null;
+  trail.pop();
+  pos=chain.length?chain[chain.length-1].lie:hole().start;
+  const fd=pos===hole().goal?0:(fdgoal[pos]!==undefined?fdgoal[pos]:hole().par);
+  const p2=pos===hole().goal?1:(hole().par-Math.min(fd,hole().par))/hole().par;
+  const wasR=inRough;inRough=chain.length>0&&chain.length+fd>hole().par;
+  animateBall(visCurve(progress),visCurve(p2),{rough:inRough,fromRough:wasR});
+  progress=p2;render();msg('','');
+};
+$('forfeit').onclick=function(){
+  if(!$('forfeit').dataset.arm){
+    $('forfeit').dataset.arm='1';$('forfeit').textContent='⌂ もう一度タップで棄権確定';
+    setTimeout(function(){delete $('forfeit').dataset.arm;$('forfeit').textContent='⌂ コース選択へ（棄権）';},2500);
+    return;
+  }
+  delete $('forfeit').dataset.arm;$('forfeit').textContent='⌂ コース選択へ（棄権）';
+  if(scores.some(function(s){return s===null;}))recDQ(courseKey());
+  backToPreround();
+};
+$('giveup').onclick=function(){holeOut('giveup');};
+$('nexthole').onclick=next;
+$('copybtn').onclick=function(){navigator.clipboard.writeText($('sharetext').textContent)
+  .then(function(){$('copybtn').textContent='コピーしました ✓';})
+  .catch(function(){$('copybtn').textContent='選択してコピーしてください';});};
+$('gearbtn').onclick=function(){$('opts').hidden=!$('opts').hidden;};
+$('hudline').onclick=function(){const c=$('hudChain');c.hidden=!c.hidden;$('hudCaret').textContent=c.hidden?'▾':'▴';};
+$('optLearner').onchange=function(){render();};
+$('optClubs').onchange=function(){if(!$('preround').hidden)renderPreround();};
+$('optBigKanji').onchange=function(){document.body.style.fontSize=$('optBigKanji').checked?'112%':'';render&&scores&&!$('game').hidden&&render();};
+$('optClearNotes').onclick=function(){
+  if(!Object.keys(NOTES).length){msgOpt('ノートは空です');return;}
+  if($('optClearNotes').dataset.arm){NOTES={};saveNotes();renderNotes();if(!$('game').hidden)render();$('optClearNotes').textContent='消去しました';delete $('optClearNotes').dataset.arm;}
+  else{$('optClearNotes').dataset.arm='1';$('optClearNotes').textContent='もう一度タップで確定';}
+};
+function msgOpt(t){$('optClearNotes').textContent=t;}
+$('optUser').onclick=function(){devOff();try{localStorage.removeItem('kg_user');}catch(e){};USER='';$('loginPass').value='';$('loginName').value='';setStat('');showLogin();};
+function renderDevDash(){
+  $('devwho').textContent=USER||'—';
+  $('devBackend').value=BACKEND();
+  const T=[['optLearner','学習モード'],['optSound','サウンド'],['optClubs','特殊クラブ'],['optAnim','アニメーション'],['optBigKanji','文字大']];
+  $('devToggles').innerHTML=T.map(function(x){
+    return '<button class="ghost" data-t="'+x[0]+'" style="'+($(x[0]).checked?'background:linear-gradient(#F6EBCB,#EBDCB2);box-shadow:inset 0 0 0 1.4px var(--gold);font-weight:700;':'')+'">'+x[1]+'</button>';
+  }).join('');
+  $('devToggles').querySelectorAll('button').forEach(function(b){
+    b.onclick=function(){const c=$(b.dataset.t);c.checked=!c.checked;c.onchange&&c.onchange();renderDevDash();};
+  });
+}
+$('devBackendSave').onclick=function(){
+  try{localStorage.setItem('kg_backend',$('devBackend').value.trim());}catch(e){}
+  $('devBackendStat').textContent='保存しました';
+};
+$('devBackendTest').onclick=async function(){
+  const u=$('devBackend').value.trim();
+  if(!u){$('devBackendStat').textContent='URL未設定（端末内モード）';return;}
+  $('devBackendStat').textContent='テスト中…';
+  try{const r=await fetch(u+'/check?name=ConnTest01',{signal:AbortSignal.timeout(5000)});
+    const j=await r.json();
+    $('devBackendStat').textContent=('available' in j)?'接続OK ✓':'応答が不正です';
+  }catch(e){$('devBackendStat').textContent='接続できません: '+e.message;}
+};
+$('devDumpRec').onclick=function(){$('devIO').value=JSON.stringify(getRecords());};
+$('devDevOff').onclick=function(){$('optDev').onclick();};
+try{JSON.parse(localStorage.getItem('kg_courses')||'[]').forEach(function(c){COURSES.push(c);});}catch(e){}
+loadPublished();
+$('optDev').onclick=function(){
+  if(isDev()){try{localStorage.removeItem('kg_dev');}catch(e){};$('optDev').textContent='開発者';$('tabMaker').hidden=true;if(!$('game').hidden)render();return;}
+  const p=window.prompt('開発者パスコード');
+  if(p==='albatross'){try{localStorage.setItem('kg_dev','1');}catch(e){};$('optDev').textContent='開発者 ✓';$('tabMaker').hidden=false;if(!$('game').hidden)render();}
+};
+$('probtn').onclick=function(){const w=proShot();if(w){$('wordin').value=w;swing();}};
+$('commonbtn').onclick=function(){const w=commonShot();if(w){$('wordin').value=w;swing();}};
+$('tabRound').onclick=function(){showView('viewRound','tabRound');};
+$('tabNotes').onclick=function(){showView('viewNotes','tabNotes');renderNotes();};
+document.querySelectorAll('.hlang').forEach(function(b){
+  b.onclick=function(){
+    document.querySelectorAll('.hlang').forEach(function(x){x.style.background='';x.style.color='';});
+    b.style.background='var(--ink)';b.style.color='var(--paper)';
+    document.querySelectorAll('.hsec').forEach(function(s){s.hidden=true;});
+    document.getElementById('help_'+b.dataset.l).hidden=false;
+  };
+});
+$('tabHelp').onclick=function(){showView('viewHelp','tabHelp');};
+const THEMEMAP={viewRound:'t-golf',viewRange:'t-golf',viewBuild:'t-golf',viewCom:'t-golf',viewTennis:'t-tennis'};
+function showView(v,t){
+  document.body.className=THEMEMAP[v]||'t-sport';
+  ['viewHub','viewTennis','viewRound','viewNotes','viewHelp','viewMaker','viewBuild','viewRange','viewCom'].forEach(function(x){var e=$(x);if(e)e.hidden=(x!==v);});
+  ['tabHub','tabRound','tabTennis','tabSumo','tabNotes','tabHelp','tabMaker'].forEach(function(x){var e=$(x);if(e)e.classList.toggle('active',x===t);});
+}
+$('tabHub').onclick=function(){showView('viewHub','tabHub');
+  const hr=new Date().getHours(),hello=hr<11?'おはようございます':hr<18?'こんにちは':'こんばんは';
+  if($('hubHello'))$('hubHello').textContent=hello+'、'+(USER||'ゲスト')+'選手！ 今日はどれで汗をかく？';
+};
+$('tabTennis').onclick=function(){showView('viewTennis','tabTennis');tenInit();};
+$('tabSumo').onclick=function(){location.href='sumo/';};
+window.goGolf=function(){showView('viewRound','tabRound');renderPreround();};
+window.goRange=function(){showView('viewRange','tabRound');rangeInit();};
+window.goBuild=function(){showView('viewBuild','tabRound');bRefresh();};
+window.goCom=function(){showView('viewCom','tabRound');renderCom();};
+document.querySelectorAll('.hubcard[data-go]').forEach(function(b){
+  b.onclick=function(){
+    const go=b.dataset.go;
+    if(go==='golf')goGolf();
+    else if(go==='range')goRange();
+    else if(go==='tennis')$('tabTennis').onclick();
+    else if(go==='club'){showView('viewNotes','tabNotes');renderNotes();}
+    else if(go==='build')goBuild();
+    else if(go==='help'){showView('viewHelp','tabHelp');}
+    else if(go==='sumo')$('tabSumo').onclick();
+  };
+});
+document.querySelectorAll('.mappin[data-go]').forEach(function(b){
+  b.onclick=function(){document.querySelector('.hubcard[data-go='+b.dataset.go+']').onclick();};
+});
+
+
+$('tabMaker').onclick=function(){showView('viewMaker','tabMaker');renderDevDash();};
+$('coursepar').textContent=HOLES.reduce(function(a,b){return a+b.par;},0);
+window.pickCourse=function(i){setCourse(i);renderPreround();};
+setCourse(0);/* ---------- accounts / records / dev ---------- */
+function BACKEND(){try{return localStorage.getItem('kg_backend')||'https://kanjigolf-api.grantgqiu.workers.dev';}catch(e){return 'https://kanjigolf-api.grantgqiu.workers.dev';}}
+const NAME_RE=/^[A-Za-z0-9]{3,12}$/;
+let nameOK=false, nameTimer=null;
+function setStat(t,ok){const s=$('loginStat');s.textContent=t;s.style.color=ok===true?'var(--turf)':ok===false?'var(--shu)':'var(--pencil)';}
+async function apiCheck(n){
+  const r=await fetch(BACKEND()+'/check?name='+encodeURIComponent(n),{signal:AbortSignal.timeout(4000)});
+  return (await r.json()).available;
+}
+async function apiClaim(n,p){
+  const r=await fetch(BACKEND()+'/register',{method:'POST',headers:{'Content-Type':'application/json'},
+    body:JSON.stringify({name:n,pass:p}),signal:AbortSignal.timeout(4000)});
+  return (await r.json()).ok;
+}
+async function apiLogin(n,p){
+  const r=await fetch(BACKEND()+'/login',{method:'POST',headers:{'Content-Type':'application/json'},
+    body:JSON.stringify({name:n,pass:p}),signal:AbortSignal.timeout(4000)});
+  return (await r.json()).ok;
+}
+let nameTaken=false;
+let USER='';
+try{USER=localStorage.getItem('kg_user')||'';}catch(e){}
+function isDev(){try{return localStorage.getItem('kg_dev')==='1';}catch(e){return false;}}
+function courseKey(){const c=COURSES[courseIdx];return c.name+'|'+c.holes.map(function(H){return H.start+H.goal;}).join('');}
+function getRecords(){try{return JSON.parse(localStorage.getItem('kg_records')||'{}');}catch(e){return {};}}
+function recOf(key){
+  const r=getRecords(); let v=(r[USER]||{})[key];
+  if(typeof v==='number')v={best:v};        // migrate old schema
+  return v||{};
+}
+function putRec(key,obj){
+  const r=getRecords();r[USER]=r[USER]||{};r[USER][key]=obj;
+  try{localStorage.setItem('kg_records',JSON.stringify(r));}catch(e){}
+}
+function bestFor(key){return recOf(key).best;}
+function saveRecord(key,tot){
+  const v=recOf(key), old=v.best;
+  if(old===undefined||tot<old){v.best=tot;putRec(key,v);return old===undefined?null:old;}
+  return null;
+}
+function recHoleScore(key,holeNo,sc){
+  const v=recOf(key);v.holes=v.holes||{};
+  if(v.holes[holeNo]===undefined||sc<v.holes[holeNo]){v.holes[holeNo]=sc;putRec(key,v);}
+}
+function recDQ(key){const v=recOf(key);v.dq=(v.dq||0)+1;v.last='DQ';putRec(key,v);}
+/* ---- community stats ---- */
+let STATS={};
+async function fetchStats(key){
+  if(!BACKEND()||STATS[key])return STATS[key];
+  try{
+    const r=await fetch(BACKEND()+'/stats?course='+encodeURIComponent(key),{signal:AbortSignal.timeout(5000)});
+    const j=await r.json();
+    if(j&&!j.error){STATS[key]=j;return j;}
+  }catch(e){}
+  return null;
+}
+async function postScore(key,total,holesArr){
+  if(!BACKEND()||isDev())return;   // dev rounds never enter community stats
+  try{
+    await fetch(BACKEND()+'/score',{method:'POST',headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({course:key,user:USER,total:total,holes:holesArr}),signal:AbortSignal.timeout(5000)});
+    delete STATS[key];
+  }catch(e){}
+}
+function showLogin(){$('login').style.display='flex';$('loginName').focus();}
+$('loginName').addEventListener('input',function(){
+  const n=$('loginName').value.trim();
+  nameOK=false; clearTimeout(nameTimer);
+  if(!n){setStat('');return;}
+  if(!NAME_RE.test(n)){setStat('英数字 3〜12文字で入力してください',false);return;}
+  if(!BACKEND()){nameOK=true;setStat('OK（この端末に保存されます）',true);return;}
+  setStat('確認中…');
+  nameTimer=setTimeout(async function(){
+    try{
+      const av=await apiCheck(n);
+      nameTaken=!av; nameOK=true;
+      setStat(av?'新規登録できます ✓ パスワードを決めてください':'既存アカウント — パスワードでログイン',av?true:null);
+    }catch(e){nameOK=true;setStat('サーバーに届かないため、この端末に保存します',null);}
+  },350);
+});
+$('loginGo').onclick=async function(){
+  const n=$('loginName').value.trim(), p=$('loginPass').value;
+  if(!n){$('loginGuest').onclick();return;}
+  if(!NAME_RE.test(n)){setStat('英数字 3〜12文字で入力してください',false);return;}
+  if(BACKEND()){
+    if(p.length<4){setStat('パスワードは4文字以上で',false);return;}
+    try{
+      if(nameTaken){
+        setStat('照合中…');
+        const ok=await apiLogin(n,p);
+        if(!ok){setStat('パスワードが違います',false);return;}
+        setStat('おかえりなさい ✓',true);
+      }else{
+        setStat('登録中…');
+        const ok=await apiClaim(n,p);
+        if(!ok){setStat('この名前は使用中です — パスワードでログインしてください',false);nameTaken=true;return;}
+        setStat('登録しました ✓',true);
+      }
+    }catch(e){/* offline → local fallback */}
+  }
+  devOff();
+  USER=n;try{localStorage.setItem('kg_user',n);}catch(e){}
+  $('login').style.display='none';renderPreround();$('tabHub').onclick();
+};
+$('loginGuest').onclick=function(){devOff();setTimeout(function(){$('tabHub').onclick();},0);USER='ゲスト';try{localStorage.setItem('kg_user',USER);}catch(e){};$('login').style.display='none';renderPreround();};
+$('loginName').addEventListener('keydown',function(e){if(e.key==='Enter')$('loginGo').onclick();});
+if(!USER)showLogin();
+if(isDev()){$('tabMaker').hidden=false;$('optDev').textContent='開発者 ✓';}
+renderPreround();renderNotes();
+
+/* ================= PRACTICE RANGE ================= */
+const RANGE={pool:null,idx:0,found:[],pts:0,balls:0,k:'',mode:'free',time:60,timerId:null};
+function ptsFor(n){ // n = how manieth word on this ball (1-based)
+  if(n<=3)return 10;
+  if(n===4)return 15;          // 1.5x
+  return 10*(n-3);             // 2x,3x,4x,5x…
+}
+function ptFloat(p,mult){
+  const z=$('ptzone');if(!z)return;
+  const s=document.createElement('span');
+  s.className='ptfloat'+(mult>1?' ptcombo':'');
+  s.textContent='+'+p+(mult>1?'  ×'+(mult%1?mult.toFixed(1):mult):'');
+  z.appendChild(s);
+  setTimeout(function(){s.remove();},950);
+}
+function rangeTimedStart(){
+  rangeFreeze(false);
+  RANGE.mode='timed';RANGE.pts=0;RANGE.balls=0;RANGE.time=60;
+  $('rangeResult').hidden=true;$('rangeTimed').hidden=true;$('rangeTimer').hidden=false;
+  $('rangeidk').hidden=true;$('rangepass').hidden=false;
+  rangeNextBall();
+  clearInterval(RANGE.timerId);
+  RANGE.timerId=setInterval(function(){
+    if($('viewRange').hidden){rangeTimedEnd(true);return;}
+    RANGE.time--;
+    const t=$('rangeTimer');t.textContent=RANGE.time;
+    t.classList.toggle('hot',RANGE.time<=10);
+    if(RANGE.time<=0)rangeTimedEnd(false);
+  },1000);
+  $('rangeTimer').textContent=60;$('rangeTimer').classList.remove('hot');
+  $('rangein').focus();
+}
+function rangeFreeze(b){
+  ['rangein','rangeswing','rangenext','rangepass','rangeidk'].forEach(function(id){var e=$(id);if(e)e.disabled=b;});
+}
+function rangeTimedEnd(quiet){
+  clearInterval(RANGE.timerId);RANGE.timerId=null;
+  const pts=RANGE.pts;
+  RANGE.mode='free';
+  $('rangeTimer').hidden=true;$('rangeTimer').textContent='60';$('rangeTimer').classList.remove('hot');
+  $('rangeTimed').hidden=false;
+  $('rangeidk').hidden=false;$('rangepass').hidden=true;
+  $('rangein').value='';$('rangemsg').textContent='';
+  if(quiet)return;
+  rangeFreeze(true);
+  mp3('putt',0.9)||SFX.cup();
+  $('rangeResultPts').textContent=pts+' pt';
+  $('rangeResult').hidden=false;
+  $('rangeLB').hidden=false;
+  if($('rangeLB').scrollIntoView)$('rangeLB').scrollIntoView({behavior:'smooth',block:'nearest'});
+  if(!isDev()){
+    fetch(BACKEND()+'/range',{method:'POST',headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({user:USER||'ゲスト',pts:pts}),signal:AbortSignal.timeout(5000)})
+      .then(function(){return rangeLoadLB(true);}).catch(function(){});
+  }
+}
+async function rangeLoadLB(force){
+  try{
+    const r=await fetch(BACKEND()+'/range',{signal:AbortSignal.timeout(5000)});
+    const j=await r.json();
+    const medal=['🥇','🥈','🥉','４','５'];
+    $('rangeLB').hidden=false;
+    $('rangeLB').innerHTML='<div class="lbtitle">1分チャレンジ・リーダーボード</div>'+((j&&j.top&&j.top.length)
+      ? j.top.slice(0,5).map(function(e,i){
+          return '<div class="lbrow"><span class="lbmedal">'+medal[i]+'</span><span class="lbname">'+e.user+'</span><span class="lbscore">'+e.score+' pt</span></div>';
+        }).join('')
+      : '<div class="sub" style="margin:2px 0">まだ記録なし — 最初の挑戦者になろう</div>');
+  }catch(e){}
+}
+function rangePool(){
+  if(RANGE.pool)return RANGE.pool;
+  const heads={};
+  function feed(w){if((DATA.freq[w]||99)<=15){(heads[w[0]]=heads[w[0]]||[]).push(w);}}
+  for(let i=0;i<DATA.d.w2.length;i+=2)feed(DATA.d.w2.slice(i,i+2));
+  for(const w of DATA.d.wL)feed(w);
+  const pool=Object.keys(heads).filter(function(k){return heads[k].length>=3;});
+  for(let i=pool.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));const t=pool[i];pool[i]=pool[j];pool[j]=t;}
+  RANGE.pool=pool;RANGE.words=heads;
+  return pool;
+}
+function rangeInit(){
+  rangePool();
+  if(!RANGE.k)rangeNextBall();
+  else rangeRender();
+  rangeLoadLB();
+}
+function rangeNextBall(){
+  const pool=rangePool();
+  RANGE.k=pool[RANGE.idx%pool.length];RANGE.idx++;RANGE.balls++;
+  RANGE.found=[];
+  $('rangesugg').hidden=true;$('rangemsg').textContent='';$('rangein').value='';
+  $('combobadge').hidden=true;
+  rangeRender();
+}
+function rangeRender(){
+  $('rangeK').textContent=RANGE.k;
+  $('rangeballs').textContent=RANGE.balls;
+  $('rangepts').textContent=RANGE.pts;
+  $('rangeStat').textContent='この球: '+RANGE.found.length+'語'+(RANGE.found.length>=3?' — 次へ進めます':'（あと'+(3-RANGE.found.length)+'語で次へ）');
+  $('rangenext').disabled=RANGE.found.length<3;
+  $('rangefound').innerHTML=RANGE.found.length
+    ? RANGE.found.map(function(w,i){return '<span class="pill"><span class="pno">'+(i+1)+'</span><span class="pword">'+w+'</span></span>';}).join('')
+    : '<span class="sub" style="margin:2px 0;font-size:11px">「'+RANGE.k+'」で始まる熟語を打とう</span>';
+}
+function rangeSwing(){
+  const w=$('rangein').value.trim();
+  $('rangein').value='';
+  if(!w)return;
+  if(w[0]!==RANGE.k){$('rangemsg').textContent='「'+RANGE.k+'」で始まる語で';SFX.err();return;}
+  if(w.length<2||w.length>4){$('rangemsg').textContent='2〜4字の熟語で';SFX.err();return;}
+  if(RANGE.found.indexOf(w)>=0){$('rangemsg').textContent='その語は打ちました';SFX.err();return;}
+  if(!inAnyDict(w)&&!GEO.has(w)){$('rangemsg').textContent='辞書に見つかりません';SFX.err();return;}
+  collectWord(w,'range');
+  RANGE.found.push(w);
+  const n=RANGE.found.length, p=ptsFor(n), mult=n<=3?1:(n===4?1.5:n-3);
+  RANGE.pts+=p;
+  ptFloat(p,mult);
+  if(mult>1){
+    $('combobadge').hidden=false;
+    $('combobadge').textContent='🔥 コンボ ×'+(mult%1?mult.toFixed(1):mult);
+    SFX.rare();
+  }else{
+    $('combobadge').hidden=true;
+    mp3('iron',0.7)||SFX.strike();
+  }
+  $('rangemsg').textContent='ナイスショット！「'+w+'」';
+  rangeRender();
+}
+function rangeIDK(){
+  const need=Math.max(1,3-RANGE.found.length);
+  const cands=(RANGE.words[RANGE.k]||[]).filter(function(w){return RANGE.found.indexOf(w)<0;})
+    .sort(function(a,b){return (DATA.freq[a]||99)-(DATA.freq[b]||99);}).slice(0,8);
+  $('rangeneed').textContent=need;
+  $('rangesugglist').innerHTML=cands.map(function(w){
+    const lx=lexOf(w);
+    return '<label style="display:flex;gap:8px;align-items:baseline;padding:4px 2px;cursor:pointer">'
+      +'<input type="checkbox" class="rsg" value="'+w+'">'
+      +'<b style="font-size:16px">'+w+'</b>'
+      +'<span class="sub" style="margin:0;font-size:10.5px">'+(lx?lx[0]+(lx[1]?' — '+lx[1]:''):'')+'</span></label>';
+  }).join('');
+  $('rangesugg').hidden=false;
+  const upd=function(){
+    const n=document.querySelectorAll('.rsg:checked').length;
+    $('rangesuggok').disabled=n<need;
+    $('rangesuggok').textContent=n<need?('あと'+(need-n)+'語選んでください'):('ノートに'+n+'語追加して次の球へ');
+  };
+  document.querySelectorAll('.rsg').forEach(function(c){c.addEventListener('change',upd);});
+  upd();
+}
+(function(){
+  const ri=$('rangein');let rComposing=false;
+  if(!ri)return;
+  ri.addEventListener('compositionstart',function(){rComposing=true;});
+  ri.addEventListener('compositionend',function(){rComposing=false;});
+  ri.addEventListener('keydown',function(e){if(e.key==='Enter'&&!e.isComposing&&!rComposing&&e.keyCode!==229)rangeSwing();});
+  ri.addEventListener('keyup',function(e){if(e.key==='Enter'&&!e.isComposing&&!rComposing&&ri.value.trim())rangeSwing();});
+  $('rangeswing').onclick=rangeSwing;
+  $('rangenext').onclick=function(){SFX.club();rangeNextBall();};
+  $('rangeidk').onclick=rangeIDK;
+  $('rangepass').onclick=function(){SFX.club();rangeNextBall();};
+  $('rangeTimed').onclick=rangeTimedStart;
+  $('rangeAgain').onclick=rangeTimedStart;
+  $('rangeClose').onclick=function(){rangeFreeze(false);$('rangeResult').hidden=true;rangeNextBall();};
+  $('rangesuggok').onclick=function(){
+    document.querySelectorAll('.rsg:checked').forEach(function(c){addNote(c.value);});
+    SFX.club();rangeNextBall();
+  };
+})();
+/* ================= COMMUNITY TAB ================= */
+function renderCom(){
+  const list=COURSES.map(function(c,i){return [c,i];}).filter(function(x){return !isBuiltin(x[0])&&!x[0]._temp;});
+  $('comlist').innerHTML=list.length?list.map(function(x){
+    const c=x[0], v=recOf(c.name+'|'+c.holes.map(function(H){return H.start+H.goal;}).join(''));
+    const par=c.holes.reduce(function(a,H){return a+(H.par||4);},0);
+    return '<div class="mcard" style="margin:6px 0;padding:10px 13px;display:flex;align-items:center;gap:10px;cursor:default">'
+      +'<div><b style="font-size:16px">'+c.name+'</b><div class="sub" style="margin:0;font-size:10px">'+(c.by?'by '+c.by+'・':'')+c.holes.length+'ホール・PAR '+par+'</div></div>'
+      +'<button class="btn" style="margin-left:auto;padding:8px 14px" onclick="window.comPlay('+x[1]+')">▶ プレー</button></div>';
+  }).join(''):'<div class="sub" style="text-align:left">まだ公開コースがありません。「工房」で最初のコースを作りませんか？</div>';
+}
+window.comPlay=function(i){setCourse(i);showView('viewRound','tabRound');renderPreround();};
+(function(){const b=$('comRefresh');if(b)b.onclick=function(){b.textContent='↻ 取得中…';Promise.resolve(loadPublished()).then(function(){b.textContent='↻ 更新';renderCom();}).catch(function(){b.textContent='↻ 更新';});};})();
+/* ================= NOTE TOOLS ================= */
+(function(){
+  const s=$('noteSort');if(!s)return;
+  s.onchange=renderNotes;
+  $('noteFetchAll').onclick=async function(){
+    const btn=$('noteFetchAll');btn.disabled=true;
+    const missing=Object.keys(NOTES).filter(function(w){return !NOTES[w][3];}).slice(0,20);
+    for(let i=0;i<missing.length;i++){
+      btn.textContent='取得中 '+(i+1)+'/'+missing.length;
+      const r=await fetchSentence(missing[i]);
+      if(r){NOTES[missing[i]][3]=r.jp;NOTES[missing[i]][4]=r.en;}
+      await new Promise(function(res){setTimeout(res,400);});
+    }
+    saveNotes();renderNotes();btn.disabled=false;btn.textContent='例文を一括取得';
+  };
+  $('noteAnki').onclick=function(){
+    const rows=noteSortKeys().map(function(w){
+      const n=NOTES[w];
+      const back=(n[3]||'')+(n[4]?'<br><i>'+n[4]+'</i>':'')+(n[3]?'<br>':'')+(n[0]||'')+(n[1]?' — '+n[1]:'');
+      return w+'\t'+back.replace(/\t/g,' ').replace(/\n/g,'<br>');
+    });
+    try{
+      const blob=new Blob(['#separator:tab\n#html:true\n'+rows.join('\n')],{type:'text/tab-separated-values'});
+      const a=document.createElement('a');
+      a.href=URL.createObjectURL(blob);a.download='kanjigolf_notes.tsv';
+      document.body.appendChild(a);a.click();a.remove();
+      $('notecount').textContent=rows.length+' 語 — TSVを書き出しました（Ankiで「タブ区切り」でインポート：表=単語、裏=例文）';
+    }catch(e){}
+  };
+})();
+
+/* ================= TENNIS RALLY ================= */
+const TEN={on:false,mode:'cpu',need:'',used:null,pts:[0,0],turn:0,timerId:null,clock:15,clockMax:15,turnStart:0,names:['あなた','CPU']};
+let TENLOG=[];
+function tenPressure(rt){return Math.round(Math.max(4,Math.min(15,4+11*(1-Math.exp(-rt/6)))));}
+const TENPTS=['0','15','30','40'];
+function tenInit(){ $('tenGame').hidden=true; $('tenSetup').style.display=''; }
+function tenServe(){
+  TEN.clockMax=15;
+  const pool=rangePool();
+  TEN.need=pool[Math.floor(Math.random()*pool.length)];
+  TEN.used=new Set();TEN.turn=0;
+  $('tenchain').innerHTML='';$('tenmsg').textContent='';$('tenin').value='';
+  tenTick(true);tenRender();
+}
+function tenStart(mode){
+  TEN.on=true;TEN.mode=mode;TEN.pts=[0,0];TENLOG=[];TEN.clockMax=15;
+  TEN.names=mode==='cpu'?[USER||'あなた','CPU']:['プレイヤー1','プレイヤー2'];
+  $('tenN0').textContent=TEN.names[0];$('tenN1').textContent=TEN.names[1];
+  $('tenSetup').style.display='none';$('tenGame').hidden=false;
+  tenServe();$('tenin').focus();
+}
+function tenRender(){
+  $('tenP0').textContent=TEN.pts[0]>=4?'G':TENPTS[TEN.pts[0]];
+  $('tenP1').textContent=TEN.pts[1]>=4?'G':TENPTS[TEN.pts[1]];
+  $('tenNeed').textContent=TEN.need;
+  $('tenTurn').textContent=TEN.names[TEN.turn]+'のショット — 「'+TEN.need+'」で始まる熟語を';
+  $('tenin').disabled=(TEN.mode==='cpu'&&TEN.turn===1);
+}
+function tenTick(reset){
+  if(reset){clearInterval(TEN.timerId);TEN.clock=TEN.clockMax;TEN.turnStart=Date.now();
+    TEN.timerId=setInterval(function(){
+      if($('viewTennis').hidden){clearInterval(TEN.timerId);TEN.on=false;return;}
+      TEN.clock--;
+      $('tenClock').style.width=Math.max(0,TEN.clock/TEN.clockMax*100)+'%';
+      $('tenClock').classList.toggle('hot',TEN.clock<=5);
+      if(TEN.clock<=0)tenPoint(1-TEN.turn,'時間切れ！');
+    },1000);
+  }
+  $('tenClock').style.width='100%';$('tenClock').classList.remove('hot');
+}
+function tenAddShot(w,who){
+  const p=document.createElement('div');
+  p.className='tenshot '+(who===0?'tleft':'tright');
+  p.innerHTML='<span class="pill"><span class="pword">'+w+'</span></span>';
+  $('tenchain').appendChild(p);
+  $('tenchain').scrollTop=$('tenchain').scrollHeight;
+}
+function tenPoint(who,why){
+  clearInterval(TEN.timerId);
+  if(who===1){ // I lost the point: log the kanji that beat me + a learnable answer
+    const best=((ADJW[TEN.need]||[]).filter(function(w){return !TEN.used.has(w)&&(DATA.freq[w]||99)<=20;})
+      .sort(function(a,b){return (DATA.freq[a]||99)-(DATA.freq[b]||99);}))[0];
+    if(best)TENLOG.push({w:best,sub:'「'+TEN.need+'」で返せず（'+why+'）'});
+  }
+  TEN.pts[who]++;
+  mp3('putt',0.8)||SFX.cup();
+  $('tenmsg').textContent=why+' — '+TEN.names[who]+'のポイント';
+  tenRender();
+  if(TEN.pts[who]>=4){
+    $('tenmsg').textContent='ゲーム！ '+TEN.names[who]+'の勝ち 🎾';
+    TEN.on=false;
+    setTimeout(function(){ $('tenSetup').style.display='';$('tenGame').hidden=true;openReport('試合レポート — 拾えることば',TENLOG); },2200);
+    return;
+  }
+  setTimeout(function(){if(TEN.on)tenServe();},1600);
+}
+function tenPlay(w,who){
+  const rt=(Date.now()-TEN.turnStart)/1000;
+  TEN.clockMax=tenPressure(rt);
+  if(who===1)TENLOG.push({w:w,sub:'相手の返球'});
+  TEN.used.add(w);
+  tenAddShot(w,who);
+  mp3('iron',0.6)||SFX.strike();
+  TEN.need=w[w.length-1];
+  TEN.turn=1-who;
+  tenTick(true);tenRender();
+  if(TEN.clockMax<=8&&!(TEN.mode==='cpu'&&TEN.turn===1))$('tenmsg').textContent='速い返球！持ち時間'+TEN.clockMax+'秒！';
+  if(TEN.mode==='cpu'&&TEN.turn===1)setTimeout(tenCpu,2200+Math.random()*3800);
+}
+function tenCpu(){
+  if(!TEN.on||TEN.turn!==1)return;
+  const cands=(ADJW[TEN.need]||[]).filter(function(w){return !TEN.used.has(w)&&(DATA.freq[w]||99)<=30&&w.length>=2&&w.length<=4;})
+    .sort(function(a,b){return (DATA.freq[a]||99)-(DATA.freq[b]||99);});
+  if(!cands.length){tenPoint(0,'CPU、返せない！');return;}
+  tenPlay(cands[Math.floor(Math.random()*Math.min(4,cands.length))],1);
+}
+function tenSwing(){
+  if(!TEN.on)return;
+  const who=TEN.turn;
+  if(TEN.mode==='cpu'&&who===1)return;
+  const w=$('tenin').value.trim();$('tenin').value='';
+  if(!w)return;
+  if(w[0]!==TEN.need){$('tenmsg').textContent='「'+TEN.need+'」で始まる語で';SFX.err();return;}
+  if(w.length<2||w.length>4){$('tenmsg').textContent='2〜4字の熟語で';SFX.err();return;}
+  if(TEN.used.has(w)){tenPoint(1-who,'同じ語は二度打てない！');return;}
+  if(!inAnyDict(w)&&!GEO.has(w)){$('tenmsg').textContent='辞書に見つかりません';SFX.err();return;}
+  collectWord(w,'tennis');
+  tenPlay(w,who);
+}
+(function(){
+  const ti=$('tenin');if(!ti)return;let tc=false;
+  ti.addEventListener('compositionstart',function(){tc=true;});
+  ti.addEventListener('compositionend',function(){tc=false;});
+  ti.addEventListener('keydown',function(e){if(e.key==='Enter'&&!e.isComposing&&!tc&&e.keyCode!==229)tenSwing();});
+  ti.addEventListener('keyup',function(e){if(e.key==='Enter'&&!e.isComposing&&!tc&&ti.value.trim())tenSwing();});
+  $('tenswing').onclick=tenSwing;
+  $('tenVsCpu').onclick=function(){tenStart('cpu');};
+  $('tenVs2p').onclick=function(){tenStart('2p');};
+  $('tenQuit').onclick=function(){clearInterval(TEN.timerId);TEN.on=false;tenInit();};
+})();
+
+/* ---- shared post-match vocabulary report ---- */
+function openReport(title,rows){
+  const seen={},uniq=[];
+  rows.forEach(function(r){if(r.w&&!seen[r.w]){seen[r.w]=1;uniq.push(r);}});
+  $('reptitle').textContent=title;
+  $('replist').innerHTML=uniq.length?uniq.map(function(r,i){
+    const lx=lexOf(r.w);
+    return '<label class="reprow"><input type="checkbox" class="repck" value="'+r.w+'" checked>'
+      +'<b>'+r.w+'</b><span class="repsub">'+(lx?lx[0]+(lx[1]?' — '+lx[1]:''):'')+(r.sub?'<br>'+r.sub:'')+'</span></label>';
+  }).join(''):'<div class="sub" style="margin:6px 0">課題なし — 完璧な内容でした！🏆</div>';
+  $('repSaveSel').style.display=uniq.length?'':'none';
+  $('repSaveAll').style.display=uniq.length?'':'none';
+  $('repbox').hidden=false;
+}
+(function(){
+  $('repClose').onclick=function(){$('repbox').hidden=true;};
+  $('repSaveSel').onclick=function(){
+    document.querySelectorAll('.repck:checked').forEach(function(c){addNote(c.value);});
+    $('repbox').hidden=true;
+  };
+  $('repSaveAll').onclick=function(){
+    document.querySelectorAll('.repck').forEach(function(c){addNote(c.value);});
+    $('repbox').hidden=true;
+  };
+})();
+</script>
+</body>
+</html>

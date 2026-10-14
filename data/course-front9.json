@@ -1,0 +1,120 @@
+{
+ "holes": [
+  {
+   "hole": 1,
+   "start": "当",
+   "goal": "遊",
+   "par": 3,
+   "routes": 5,
+   "sample_path": [
+    "当社",
+    "社交",
+    "交遊"
+   ]
+  },
+  {
+   "hole": 2,
+   "start": "支",
+   "goal": "晩",
+   "par": 4,
+   "routes": 6,
+   "sample_path": [
+    "支配",
+    "配本",
+    "本朝",
+    "朝晩"
+   ]
+  },
+  {
+   "hole": 3,
+   "start": "河",
+   "goal": "環",
+   "par": 4,
+   "routes": 2,
+   "sample_path": [
+    "河原",
+    "原画",
+    "画一",
+    "一環"
+   ]
+  },
+  {
+   "hole": 4,
+   "start": "誤",
+   "goal": "王",
+   "par": 3,
+   "routes": 2,
+   "sample_path": [
+    "誤用",
+    "用法",
+    "法王"
+   ]
+  },
+  {
+   "hole": 5,
+   "start": "紅",
+   "goal": "壮",
+   "par": 5,
+   "routes": 5,
+   "sample_path": [
+    "紅茶",
+    "茶道",
+    "道義",
+    "義勇",
+    "勇壮"
+   ]
+  },
+  {
+   "hole": 6,
+   "start": "審",
+   "goal": "律",
+   "par": 4,
+   "routes": 8,
+   "sample_path": [
+    "審理",
+    "理工",
+    "工法",
+    "法律"
+   ]
+  },
+  {
+   "hole": 7,
+   "start": "過",
+   "goal": "絵",
+   "par": 3,
+   "routes": 2,
+   "sample_path": [
+    "過重",
+    "重油",
+    "油絵"
+   ]
+  },
+  {
+   "hole": 8,
+   "start": "顔",
+   "goal": "筆",
+   "par": 4,
+   "routes": 11,
+   "sample_path": [
+    "顔役",
+    "役名",
+    "名文",
+    "文筆"
+   ]
+  },
+  {
+   "hole": 9,
+   "start": "向",
+   "goal": "黄",
+   "par": 5,
+   "routes": 12,
+   "sample_path": [
+    "向後",
+    "後日",
+    "日産",
+    "産卵",
+    "卵黄"
+   ]
+  }
+ ]
+}

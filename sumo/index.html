@@ -1,0 +1,144 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1">
+<title>ことば相撲</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=DotGothic16&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<div id="app">
+
+<!-- ============ TITLE / BANZUKE ============ -->
+<section id="scTitle" class="screen">
+  <a class="back" href="../index.html">← 常用スポーツセンター</a>
+  <div class="logo">
+    <div class="logo-sub">KOTOBA-ZUMO</div>
+    <h1>ことば相撲</h1>
+    <div class="logo-tag">語彙で押せ。漢字で投げろ。</div>
+  </div>
+  <div class="panel career">
+    <div class="row"><label for="shikona">四股名</label><input id="shikona" maxlength="8" autocomplete="off" spellcheck="false"></div>
+    <div class="rankline"><span id="tRank" class="rank"></span><span id="tRecord" class="record"></span></div>
+    <div class="ladder" id="tLadder"></div>
+  </div>
+  <div class="menu">
+    <button class="btn big" id="btnBasho">本場所へ</button>
+    <button class="btn" id="btnPractice">稽古（一番勝負）</button>
+    <button class="btn ghost" id="btnHowto">遊び方</button>
+  </div>
+  <div class="foot"><button class="ghost tiny" id="btnMute">🔊 音あり</button></div>
+</section>
+
+<!-- ============ PRACTICE: PICK OPPONENT ============ -->
+<section id="scPick" class="screen" hidden>
+  <h2 class="head">稽古相手をえらぶ</h2>
+  <div class="pickgrid" id="pickGrid"></div>
+  <button class="btn ghost" data-back>戻る</button>
+</section>
+
+<!-- ============ PRE-BOUT ============ -->
+<section id="scPre" class="screen" hidden>
+  <div class="daytag" id="preDay"></div>
+  <div class="vs">
+    <div class="vscard me"><canvas class="face" id="preFace0" width="32" height="32"></canvas><b id="preName0"></b><span id="preRank0"></span></div>
+    <div class="vsmark">VS</div>
+    <div class="vscard foe"><canvas class="face" id="preFace1" width="32" height="32"></canvas><b id="preName1"></b><span id="preRank1"></span><span class="style" id="preStyle1"></span></div>
+  </div>
+  <div class="panel">
+    <div class="phase" id="banPhase">お題を1つ封じろ（BAN）</div>
+    <div class="topics" id="banGrid"></div>
+    <div class="banmsg" id="banMsg"></div>
+  </div>
+  <button class="btn big" id="btnToRing" hidden>土俵へ</button>
+</section>
+
+<!-- ============ BOUT ============ -->
+<section id="scBout" class="screen bout" hidden>
+  <div class="hud">
+    <div class="pf"><canvas class="face" id="hudFace0" width="32" height="32"></canvas><div class="grip" id="grip0"></div></div>
+    <div class="bars">
+      <div class="names"><span id="hudName0"></span><span id="hudName1"></span></div>
+      <div class="barrow"><div class="bar l"><i id="b0tai"></i></div><span class="lbl" title="体力：技を出すと減る">体</span><div class="bar r"><i id="b1tai"></i></div></div>
+      <div class="barrow"><div class="bar l ki"><i id="b0ki"></i></div><span class="lbl" title="気力：突き・投げに使う">気</span><div class="bar r ki"><i id="b1ki"></i></div></div>
+      <div class="barrow"><div class="bar l an"><i id="b0an"></i></div><span class="lbl" title="安定：0で倒れる">安</span><div class="bar r an"><i id="b1an"></i></div></div>
+    </div>
+    <div class="pf"><canvas class="face" id="hudFace1" width="32" height="32"></canvas><div class="grip" id="grip1"></div></div>
+  </div>
+  <div class="stagewrap" id="stageWrap">
+    <canvas id="stage" width="384" height="216"></canvas>
+    <div class="callout" id="callout"></div>
+    <div class="kimarite" id="kimarite" hidden></div>
+  </div>
+  <div class="ctrl" id="ctrl">
+    <div class="moves" id="moves"></div>
+    <div class="qte" id="qte" hidden>
+      <div class="qcall" id="qCall"></div>
+      <div class="qclue"><span class="qtier" id="qTier"></span><span id="qClue"></span></div>
+      <div class="qtimer"><i id="qTimer"></i></div>
+      <div class="qmash" id="qMash" hidden><i id="qMashFill"></i></div>
+      <div class="qmsg" id="qMsg"></div>
+    </div>
+    <div class="inrow">
+      <input id="ans" lang="ja" autocomplete="off" autocapitalize="off" autocorrect="off" spellcheck="false" enterkeyhint="go" aria-label="答えを入力">
+      <button class="btn" id="btnAct">打</button>
+    </div>
+    <div class="hint" id="hint"></div>
+  </div>
+</section>
+
+<!-- ============ RESULT ============ -->
+<section id="scResult" class="screen" hidden>
+  <div class="resbig" id="resBig"></div>
+  <div class="reskim" id="resKim"></div>
+  <div class="resrec" id="resRec"></div>
+  <div class="panel report">
+    <div class="phase">取組レポート — 課題のことば</div>
+    <div id="repList" class="replist"></div>
+    <div class="reptools" id="repTools"><button class="btn" id="btnSaveNotes">選んだ語をジムに保存</button></div>
+  </div>
+  <div class="menu row2">
+    <button class="btn big" id="btnNext">次の取組</button>
+    <button class="btn ghost" id="btnHome">番付へ戻る</button>
+  </div>
+</section>
+
+<!-- ============ BASHO END ============ -->
+<section id="scBasho" class="screen" hidden>
+  <h2 class="head" id="bsHead">千秋楽</h2>
+  <div class="bsrec" id="bsRec"></div>
+  <div class="bsstars" id="bsStars"></div>
+  <div class="bsmove" id="bsMove"></div>
+  <button class="btn big" id="btnBashoDone">番付へ</button>
+</section>
+
+<!-- ============ HOW TO ============ -->
+<div class="modal" id="howto" hidden>
+  <div class="panel howto">
+    <h2>遊び方</h2>
+    <p><b>立合い</b> — 「見合って…」のあと<b>「はっけよい！」で即押し</b>（キー・タップ）。早すぎると<b>待った</b>。</p>
+    <p><b>技</b> — 組み合ったら <kbd>1</kbd>押し <kbd>2</kbd>突き <kbd>3</kbd>差し <kbd>4</kbd>投げ。相手より先に仕掛けろ。</p>
+    <p><b>スローモーション</b> — 技がぶつかると時が止まり、狙われた部位（胸・喉・廻し・腰・足）が光る。そこで答えろ：</p>
+    <ul>
+      <li><b>読み</b>のお題（押し・差し・受け）→ その語を<b>漢字で</b>打つ</li>
+      <li><b>意味</b>のお題（突き・投げ）→ 説明に合う熟語を打つ。強いが難しい</li>
+      <li><b>連打</b> — 土俵際に追いつめられたら、どのキーでも連打して踏ん張れ</li>
+      <li><b>タイミング</b> — 相手を土俵際まで寄ったら、輪が重なる瞬間に押して寄り切れ</li>
+    </ul>
+    <p><b>体</b>は技で減り、<b>気</b>は突き・投げに使い、<b>安</b>が0になると倒れる。投げは<b>廻し</b>を取ってから。</p>
+    <p>受けで速く正確に答えると<b>いなし</b>て反撃。間違えた語は取組後にジムの自習ノートへ保存できる。</p>
+    <button class="btn" id="btnHowtoClose">はじめる</button>
+  </div>
+</div>
+
+</div>
+<script src="data.js"></script>
+<script src="engine.js"></script>
+<script src="audio.js"></script>
+<script src="render.js"></script>
+<script src="main.js"></script>
+</body>
+</html>
